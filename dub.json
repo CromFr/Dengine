@@ -1,0 +1,10 @@
+{
+	"name": "Dengine",
+	"description": "Minimal 3D engine written in D",
+	"copyright": "Copyright © 2014, Crom (Thibaut CHARLES)",
+	"authors": ["CromFr"],
+	"dependencies": {
+		"derelict": "~master",
+		"gl3n": "~master"
+	}
+}
