@@ -5,7 +5,7 @@ import std.traits;
 import core.thread;
 
 import engine;
-import scene.testcube;
+import scene.baseshapes;
 import opengl.shader;
 import opengl.program;
 import resource;
@@ -22,7 +22,7 @@ void main()
 	Resource.LoadFromFiles!Program("res/shaders", "*.prg", true);
 
 	//CompileShaders();
-	auto cube = new TestCube(eng.rootNode, Vect3Df(0,0,-2));
+	auto cube = new BaseTriangle(eng.rootNode, Vect3Df(0,0,-5));
 
 	cube.onUpdated.Add(delegate(){
 		cube.Move(Vect3Df(0.002, 0.0 ,0.0));
