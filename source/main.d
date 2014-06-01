@@ -16,6 +16,9 @@ import derelict.glfw3.glfw3;
 
 void main()
 {
+	version(unittest)
+		writeln("\x1b[1m\x1b[42m==========> UNITTEST SUCCESS, well done !\x1b[m");
+
 	auto eng = new Engine;
 	Resource.LoadFromFiles!Shader("res/shaders", "*.vtx", true, ShaderType.Vertex);
 	Resource.LoadFromFiles!Shader("res/shaders", "*.frg", true, ShaderType.Fragment);
