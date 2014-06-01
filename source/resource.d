@@ -54,7 +54,7 @@ unittest {
 		string s = "goto bar";
 	}
 
-	auto rm = new ResourceManager;
+	auto rm = new Resource;
 
 	auto foo = new Foo;
 	rm.AddRes("yolo", foo);
