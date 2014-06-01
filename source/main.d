@@ -25,13 +25,17 @@ void main()
 	Resource.LoadFromFiles!Program("res/shaders", "*.prg", true);
 
 	//CompileShaders();
-	auto cube = new Tetrahedron(eng.rootNode, Vect3Df(0,0,-5));
+	auto tetra = new Tetrahedron(eng.rootNode, Vect3Df(1,0,-5));
 
+	tetra.onUpdated.Add(delegate(){
+		tetra.RotateX(1);
+		tetra.RotateZ(1);
+	});
+
+	auto cube = new Cube(eng.rootNode, Vect3Df(-1,0,-5));
 	cube.onUpdated.Add(delegate(){
-		cube.Move(Vect3Df(0.002, 0.0 ,0.0));
-		cube.RotateX(1);
-		cube.RotateY(1);
-		cube.RotateZ(1);
+		cube.RotateX(-1);
+		cube.RotateZ(-1);
 	});
 
 	bool bRun=true;
