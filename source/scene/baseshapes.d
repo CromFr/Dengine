@@ -11,7 +11,7 @@ import resource;
 
 
 class Tetrahedron : NodeModel {
-	this(ref Node parent, const Vect3Df pos=Vect3Df(0,0,0), const Vect3Df rot=Vect3Df(0,0,0)){
+	this(ref Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
 		super(parent, pos, rot);
 
 		enum A = [0,0,sqrt(2.0/3.0)-1.0/(2.0*sqrt(6.0))];
