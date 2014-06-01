@@ -28,13 +28,13 @@ class Engine {
 					1024, 768, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	 //   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 		SDL_GLContext ctx = SDL_GL_CreateContext(m_win);
 
 		//Write OpenGL Version
-		writeln("OpenGL version string: ", to!string(glGetString(GL_VERSION)));
-	    writeln("OpenGL renderer string: ", to!string(glGetString(GL_RENDERER)));
-	    writeln("OpenGL vendor string: ", to!string(glGetString(GL_VENDOR)));
+		writeln("OpenGL version: ", to!string(glGetString(GL_VERSION)));
+		writeln("OpenGL renderer: ", to!string(glGetString(GL_RENDERER)));
+		writeln("OpenGL vendor: ", to!string(glGetString(GL_VENDOR)));
 
 		DerelictGL3.reload();
 
@@ -78,7 +78,7 @@ private:
 
 
 	mat4 ProjMat(float fFov, float fRatio, float fNear, float fFar){
-		float f = 1/tan(PI*fFov/360);//fFovRad/2.0
+		float f = 1/tan(PI*fFov/360);
 		return mat4(
 			f/fRatio,0,0,0,
 			0,f,0,0,

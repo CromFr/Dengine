@@ -10,7 +10,7 @@ import opengl.program;
 import resource;
 
 
-class BaseTriangle : NodeModel {
+class Tetrahedron : NodeModel {
 	this(ref Node parent, const Vect3Df pos=Vect3Df(0,0,0), const Vect3Df rot=Vect3Df(0,0,0)){
 		super(parent, pos, rot);
 

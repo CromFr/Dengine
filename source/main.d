@@ -25,7 +25,7 @@ void main()
 	Resource.LoadFromFiles!Program("res/shaders", "*.prg", true);
 
 	//CompileShaders();
-	auto cube = new BaseTriangle(eng.rootNode, Vect3Df(0,0,-5));
+	auto cube = new Tetrahedron(eng.rootNode, Vect3Df(0,0,-5));
 
 	cube.onUpdated.Add(delegate(){
 		cube.Move(Vect3Df(0.002, 0.0 ,0.0));
