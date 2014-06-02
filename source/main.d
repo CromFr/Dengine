@@ -41,7 +41,21 @@ void main()
 
 	auto crate = new Crate(eng.rootNode, Vect3Df(0,0,-5));
 	crate.onUpdated.Add(delegate(){
-		crate.RotateY(1);
+		static bool b = false;
+		static int n = 0;
+		crate.RotateY(0.2);
+		if(!b){
+			crate.RotateX(0.3);
+			n++;
+			if(n==150)
+				b=true;
+		}
+		else{
+			crate.RotateX(-0.3);
+			n--;
+			if(n==-150)
+				b=false;
+		}
 	});
 
 
