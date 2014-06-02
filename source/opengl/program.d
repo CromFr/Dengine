@@ -9,11 +9,30 @@ import derelict.opengl3.gl3;
 import opengl.shader;
 import resource;
 
+class ProgramException : Exception{
+	enum Type{
+		Linkage,
+		Creation
+	}
+
+	this(in string _msg, in Type _type, in string _filepath){
+		type = _type;
+		filepath = _filepath;
+
+		super("OpenGL Program "~to!string(type)~" exception@"~filepath~" "~_msg);
+	}
+
+	immutable Type type;
+	immutable string filepath;
+}
+
 class Program {
 	this(in uint shaders[], in char[] attribLoc...) {
+		m_filepath = "";
+
 		m_id = glCreateProgram();
 		if(m_id==0)
-			throw new Exception("Invalid program id");
+			throw new ProgramException("Created invalid ID", ProgramException.Type.Creation, m_filepath);
 
 		foreach(shaderid ; shaders){
 			glAttachShader(m_id, shaderid);
@@ -27,9 +46,11 @@ class Program {
 	}
 
 	this(DirEntry file){
+		m_filepath = file.name;
+
 		m_id = glCreateProgram();
 		if(m_id==0)
-			throw new Exception("Invalid program id");
+			throw new ProgramException("Created invalid ID", ProgramException.Type.Creation, m_filepath);
 
 		JSONValue jsonFile = parseJSON(file.readText().removechars("\n\r\t"));
 
@@ -51,8 +72,9 @@ class Program {
 
 
 private:
-	uint m_id;
+	immutable uint m_id;
 	bool m_linked = false;
+	immutable string m_filepath;
 
 	void Link(){
 		//Link
@@ -70,7 +92,7 @@ private:
 
 			//glGetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
 			glGetProgramInfoLog(m_id, length, &length, info.ptr);
-			throw new Exception("Program linkage error: "~to!string(info));
+			throw new ProgramException(to!string(info), ProgramException.Type.Linkage, m_filepath);
 		}
 		m_linked = true;
 	}
