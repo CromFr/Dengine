@@ -7,6 +7,7 @@ import derelict.opengl3.gl3;
 import derelict.glfw3.glfw3;
 import opengl.shader;
 import opengl.program;
+import opengl.texture;
 import resource;
 
 
@@ -51,7 +52,7 @@ class Tetrahedron : NodeModel {
 		glUseProgram(0);
 	}
 
-private:
+protected:
 	int m_prog;
 }
 
@@ -115,6 +116,66 @@ class Cube : NodeModel {
 		glUseProgram(0);
 	}
 
-private:
+protected:
 	int m_prog;
+}
+
+
+class Crate : Cube {
+
+	this(ref Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
+		super(parent, pos, rot);
+
+		enum bl = [0.0,0.0];
+		enum br = [1.0,0.0];
+		enum tl = [0.0,1.0];
+		enum tr = [1.0,1.0];
+
+		//m_vertices = 
+		//	 A~B~C~A~C~D
+		//	~B~F~G~B~G~C
+		//	~A~E~F~A~F~B
+		//	~E~H~G~E~G~F
+		//	~D~C~G~D~G~H
+		//	~E~A~D~E~D~H;
+
+		m_texturecoord = 
+			 tr~br~bl~tr~bl~tl
+			~br~tr~tl~br~tl~bl
+			~tl~tr~br~tl~br~bl
+			~tl~tr~br~tl~br~bl
+			~tr~br~bl~tr~bl~tl
+			~tr~br~bl~tr~bl~tl;
+
+		m_texture = Resource.Get!Texture("crate.jpg").id;
+		m_prog = Resource.Get!Program("texture.prg").id;
+	}
+
+	override void Render(ref mat4 proj, ref mat4 mdlview){
+		glUseProgram(m_prog);
+
+			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, m_vertices.ptr);
+			glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, m_colors.ptr);
+			glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, m_texturecoord.ptr);
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+
+			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
+			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
+			
+			glBindTexture(GL_TEXTURE_2D, m_texture);
+
+			glDrawArrays(GL_TRIANGLES, 0, to!int(m_vertices.length/3));
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
+
+		glUseProgram(0);
+	}
+
+	uint m_texture;
+	float m_texturecoord[];
 }

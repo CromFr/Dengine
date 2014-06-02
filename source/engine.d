@@ -4,6 +4,7 @@ import std.stdio;
 import std.math;
 
 import derelict.sdl2.sdl;
+import derelict.sdl2.image;
 import derelict.opengl3.gl3;
 import gl3n.linalg;
 
@@ -17,6 +18,7 @@ class Engine {
 		//Load libs
 		DerelictGL3.load();
 		DerelictSDL2.load();
+		DerelictSDL2Image.load();
 
 		//Init SDL
 		SDL_Init(SDL_INIT_VIDEO);

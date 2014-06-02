@@ -13,9 +13,9 @@ enum ShaderType{
 class Shader{
 	this(DirEntry file, ShaderType type){
 		immutable char sourcecode[] = file.readText();
-		this(sourcecode.ptr, type);
+		this(sourcecode.ptr, type, file.name);
 	}
-	this(immutable(char)* sourcecode, ShaderType type){
+	this(immutable(char)* sourcecode, ShaderType type, in string filepath=""){
 		m_id = glCreateShader(type);
 		if(m_id==0)
 			throw new Exception("'"~type.stringof~"' is not a shader type");
@@ -37,7 +37,7 @@ class Shader{
 
 			//glGetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
 			glGetShaderInfoLog(m_id, length, &length, info.ptr);
-			throw new Exception("Shader compilation error: "~to!string(info));
+			throw new Exception("Shader compilation error: "~filepath~":"~to!string(info));
 		}
 		m_compiled = true;
 	}

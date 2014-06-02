@@ -8,6 +8,7 @@ import engine;
 import scene.baseshapes;
 import opengl.shader;
 import opengl.program;
+import opengl.texture;
 import resource;
 	
 import derelict.sdl2.sdl;
@@ -24,19 +25,25 @@ void main()
 	Resource.LoadFromFiles!Shader("res/shaders", "*.frg", true, ShaderType.Fragment);
 	Resource.LoadFromFiles!Program("res/shaders", "*.prg", true);
 
-	//CompileShaders();
-	auto tetra = new Tetrahedron(eng.rootNode, Vect3Df(1,0,-5));
+	Resource.LoadFromFiles!Texture("res/material", "*", true);
 
+	auto tetra = new Tetrahedron(eng.rootNode, Vect3Df(2,0,-5));
 	tetra.onUpdated.Add(delegate(){
 		tetra.RotateX(1);
 		tetra.RotateZ(1);
 	});
 
-	auto cube = new Cube(eng.rootNode, Vect3Df(-1,0,-5));
+	auto cube = new Cube(eng.rootNode, Vect3Df(-2,0,-5));
 	cube.onUpdated.Add(delegate(){
 		cube.RotateX(-1);
 		cube.RotateZ(-1);
 	});
+
+	auto crate = new Crate(eng.rootNode, Vect3Df(0,0,-5));
+	crate.onUpdated.Add(delegate(){
+		crate.RotateY(1);
+	});
+
 
 	bool bRun=true;
 	while(bRun){
