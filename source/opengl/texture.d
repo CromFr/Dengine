@@ -71,6 +71,9 @@ class Texture {
 
 		SDL_FreeSurface(m_surf);
 	}
+	~this(){
+		glDeleteTextures(1, &m_id);
+	}
 
 	@property{
 		uint id() const{return m_id;}
