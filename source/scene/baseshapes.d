@@ -8,6 +8,7 @@ import derelict.glfw3.glfw3;
 import opengl.shader;
 import opengl.program;
 import opengl.texture;
+import opengl.vbo;
 import resource;
 
 
@@ -28,6 +29,13 @@ class Tetrahedron : NodeModel {
 		enum y = [1,1,0];
 
 		m_colors = r~g~b~y~r~g;
+		
+		try{
+			m_vbo = Resource.Get!Vbo("TetrahedronData");
+		}
+		catch(ResourceException e){
+			m_vbo = Resource.CreateRes!Vbo("TetrahedronData", Vbo.Rate.Rarely, m_vertices, m_colors);
+		}
 
 		m_prog = Resource.Get!Program("default.prg").id;
 	}
@@ -36,10 +44,12 @@ class Tetrahedron : NodeModel {
 		//writeln("Render");
 		glUseProgram(m_prog);
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, m_vertices.ptr);
-			glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, m_colors.ptr);
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
+			glBindBuffer(GL_ARRAY_BUFFER, m_vbo.id);
+				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
+				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
+				glEnableVertexAttribArray(0);
+				glEnableVertexAttribArray(1);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
@@ -54,6 +64,7 @@ class Tetrahedron : NodeModel {
 
 protected:
 	int m_prog;
+	Vbo m_vbo;
 }
 
 
