@@ -106,15 +106,25 @@ class Cube : NodeModel {
 			~m~m~m~m~m~m;
 
 		m_prog = Resource.Get!Program("default.prg").id;
+
+		try{
+			m_vbo = Resource.Get!Vbo("CubeData");
+		}
+		catch(ResourceException e){
+			m_vbo = Resource.CreateRes!Vbo("CubeData", Vbo.Rate.Rarely, m_vertices, m_colors);
+		}
 	}
 
 	override void Render(ref mat4 proj, ref mat4 mdlview){
 		glUseProgram(m_prog);
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, m_vertices.ptr);
-			glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, m_colors.ptr);
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
+
+			glBindBuffer(GL_ARRAY_BUFFER, m_vbo.id);
+				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
+				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
+				glEnableVertexAttribArray(0);
+				glEnableVertexAttribArray(1);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
@@ -129,6 +139,7 @@ class Cube : NodeModel {
 
 protected:
 	int m_prog;
+	Vbo m_vbo;
 }
 
 
