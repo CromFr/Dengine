@@ -27,7 +27,6 @@ class Tetrahedron : NodeModel {
 			enum C = [-1.0/(2.0*sqrt(3.0)), 0.5, -1.0/(2.0*sqrt(6.0))];
 			enum D = [1/sqrt(3.0), 0, -1/(2.0*sqrt(6.0))];
 
-			//float vertices[] = A~B~C ~ D~A~C ~ A~D~B ~ C~B~D;
 			float vertices[] = A~B~C ~ D ~ A ~ B;
 
 			enum r = [1,0,0];
@@ -35,7 +34,6 @@ class Tetrahedron : NodeModel {
 			enum b = [0,0,1];
 			enum y = [1,1,0];
 
-			//float colors[] = r~g~b~y~r~b ~r~y~g ~b~g~y;
 			float colors[] = r~g~b~y~r~g;
 
 			m_vbo ~= Resource.CreateRes!Vbo("TetrahedronData", Vbo.Rate.Rarely, vertices, colors);
