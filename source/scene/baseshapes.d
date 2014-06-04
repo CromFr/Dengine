@@ -205,3 +205,56 @@ class Crate : Cube {
 	float m_texturecoord[];
 	Vbo m_vbotext;
 }
+
+
+class Axis : NodeModel {
+	this(ref Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
+		super(parent, pos, rot);
+
+		
+
+		m_vertices = [	0,0,0, 1,0,0,
+						0,0,0, 0,1,0,
+						0,0,0, 0,0,1];
+
+		enum r = [1,0,0];
+		enum g = [0,1,0];
+		enum b = [0,0,1];
+
+		m_colors = r~r~g~g~b~b;
+
+		m_prog = Resource.Get!Program("default.prg").id;
+
+		try m_vbo = Resource.Get!Vbo("AxisData");
+		catch(ResourceException e){
+			m_vbo = Resource.CreateRes!Vbo("AxisData", Vbo.Rate.Rarely, m_vertices, m_colors);
+		}
+
+		m_vao = new Vao({
+				m_vbo.Bind();
+				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
+				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
+				glEnableVertexAttribArray(0);
+				glEnableVertexAttribArray(1);
+				Vbo.Unbind();
+			});
+	}
+
+	override void Render(ref mat4 proj, ref mat4 mdlview){
+		glUseProgram(m_prog);
+		m_vao.Bind();
+
+			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
+			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
+			
+			glDrawArrays(GL_LINES, 0, m_vbo.length[0]/12);
+
+		Vao.Unbind();
+		glUseProgram(0);
+	}
+
+protected:
+	int m_prog;
+	Vbo m_vbo;
+	Vao m_vao;
+}

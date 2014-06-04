@@ -58,6 +58,12 @@ void main()
 		}
 	});
 
+	auto axis = new Axis(eng.rootNode, Vect3Df(0,1,-5));
+	axis.onUpdated.Add(delegate(){
+		axis.RotateX(-0.1);
+		axis.RotateZ(-0.1);
+	});
+
 
 	bool bRun=true;
 	while(bRun){
