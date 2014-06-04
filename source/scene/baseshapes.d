@@ -9,6 +9,7 @@ import opengl.shader;
 import opengl.program;
 import opengl.texture;
 import opengl.vbo;
+import opengl.vao;
 import resource;
 
 
@@ -37,34 +38,36 @@ class Tetrahedron : NodeModel {
 			m_vbo = Resource.CreateRes!Vbo("TetrahedronData", Vbo.Rate.Rarely, m_vertices, m_colors);
 		}
 
+		m_vao = new Vao({
+				m_vbo.Bind();
+				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
+				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
+				glEnableVertexAttribArray(0);
+				glEnableVertexAttribArray(1);
+				Vbo.Unbind();
+			});
+
 		m_prog = Resource.Get!Program("default.prg").id;
 	}
 
 	override void Render(ref mat4 proj, ref mat4 mdlview){
 		//writeln("Render");
 		glUseProgram(m_prog);
-
-			m_vbo.Bind();
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
-			glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			Vbo.Unbind();
+			m_vao.Bind();
 
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
 			
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, to!int(m_vertices.length/3));
 
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-
+			Vao.Unbind();
 		glUseProgram(0);
 	}
 
 protected:
 	int m_prog;
 	Vbo m_vbo;
+	Vao m_vao;
 }
 
 
@@ -113,33 +116,34 @@ class Cube : NodeModel {
 		catch(ResourceException e){
 			m_vbo = Resource.CreateRes!Vbo("CubeData", Vbo.Rate.Rarely, m_vertices, m_colors);
 		}
-	}
 
-	override void Render(ref mat4 proj, ref mat4 mdlview){
-		glUseProgram(m_prog);
-
-
-			m_vbo.Bind();
+		m_vao = new Vao({
+				m_vbo.Bind();
 				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
 				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
 				glEnableVertexAttribArray(0);
 				glEnableVertexAttribArray(1);
-			Vbo.Unbind();
+				Vbo.Unbind();
+			});
+	}
+
+	override void Render(ref mat4 proj, ref mat4 mdlview){
+		glUseProgram(m_prog);
+			m_vao.Bind();
 
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
 			
 			glDrawArrays(GL_TRIANGLES, 0, to!int(m_vertices.length/3));
 
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-
+			Vao.Unbind();
 		glUseProgram(0);
 	}
 
 protected:
 	int m_prog;
 	Vbo m_vbo;
+	Vao m_vao;
 }
 
 
@@ -170,20 +174,23 @@ class Crate : Cube {
 		catch(ResourceException e){
 			m_vbotext = Resource.CreateRes!Vbo("CrateText", Vbo.Rate.Rarely, m_texturecoord);
 		}
-	}
 
-	override void Render(ref mat4 proj, ref mat4 mdlview){
-		glUseProgram(m_prog);
-
-			m_vbo.Bind();
+		m_vao = new Vao({
+				m_vbo.Bind();
 				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
 				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
 				glEnableVertexAttribArray(0);
 				glEnableVertexAttribArray(1);
-			m_vbotext.Bind();
+				m_vbotext.Bind();
 				glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, cast(void*)(m_vbotext.offset[0]));
 				glEnableVertexAttribArray(2);
-			Vbo.Unbind();
+				Vbo.Unbind();
+			});
+	}
+
+	override void Render(ref mat4 proj, ref mat4 mdlview){
+		glUseProgram(m_prog);
+			m_vao.Bind();
 
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
@@ -193,11 +200,8 @@ class Crate : Cube {
 			glDrawArrays(GL_TRIANGLES, 0, to!int(m_vertices.length/3));
 
 			glBindTexture(GL_TEXTURE_2D, 0);
-
-			glDisableVertexAttribArray(2);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-
+			
+			Vao.Unbind();
 		glUseProgram(0);
 	}
 
