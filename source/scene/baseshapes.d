@@ -14,7 +14,7 @@ import resource;
 
 
 class Tetrahedron : NodeModel {
-	this(ref Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
 		super(parent, pos, rot);
 
 		enum A = [0,0,sqrt(2.0/3.0)-1.0/(2.0*sqrt(6.0))];
@@ -74,7 +74,7 @@ protected:
 
 
 class Cube : NodeModel {
-	this(ref Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
 		super(parent, pos, rot);
 
 		enum A = [0.5,	0.5,	0.5];
@@ -149,7 +149,7 @@ protected:
 
 class Crate : Cube {
 
-	this(ref Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
 		super(parent, pos, rot);
 
 		enum bl = [0.0,0.0];
@@ -208,7 +208,7 @@ class Crate : Cube {
 
 
 class Axis : NodeModel {
-	this(ref Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
 		super(parent, pos, rot);
 
 		

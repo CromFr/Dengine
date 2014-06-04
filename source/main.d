@@ -28,19 +28,20 @@ void main()
 	Resource.LoadFromFiles!Texture("res/material", "*", true);
 
 	auto tetra = new Tetrahedron(eng.rootNode, Vect3Df(2,0,-5));
-	tetra.onUpdated.Add(delegate(){
+	tetra.onUpdated.Call({
 		tetra.RotateX(1);
 		tetra.RotateZ(1);
 	});
 
-	auto cube = new Cube(eng.rootNode, Vect3Df(-2,0,-5));
-	cube.onUpdated.Add(delegate(){
+	Cube cube = new Cube(eng.rootNode, Vect3Df(-2,0,-5));
+	cube.onUpdated.Call({
 		cube.RotateX(-1);
 		cube.RotateZ(-1);
 	});
+	auto cube2 = new Cube(cube, Vect3Df(1.5,0,0));
 
 	auto crate = new Crate(eng.rootNode, Vect3Df(0,0,-5));
-	crate.onUpdated.Add(delegate(){
+	crate.onUpdated.Call({
 		static bool b = false;
 		static int n = 0;
 		crate.RotateY(0.2);
@@ -59,7 +60,7 @@ void main()
 	});
 
 	auto axis = new Axis(eng.rootNode, Vect3Df(0,1,-5));
-	axis.onUpdated.Add(delegate(){
+	axis.onUpdated.Call({
 		axis.RotateX(-0.1);
 		axis.RotateZ(-0.1);
 	});

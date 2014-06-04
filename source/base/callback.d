@@ -13,13 +13,13 @@ class Callback {
 	//TODO operator (func) to append delegate
 	//ex: Node.onRender(function(){...});
 
-	size_t Add(void delegate() dg){
+	size_t Call(void delegate() dg){
 		m_dg[m_lastid++] = dg;
 		return m_lastid-1;
 	}
 
-	size_t Add(void function() fun){
-		return Add(toDelegate(fun));
+	size_t Call(void function() fun){
+		return Call(toDelegate(fun));
 	}
 
 	void Remove(size_t id){

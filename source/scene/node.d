@@ -8,7 +8,7 @@ public import base.callback;
 public import gl3n.linalg;
 
 abstract class Node {
-	final this(ref Node parent, in Vect3Df pos, in Vect3Df rot) {
+	final this(Node parent, in Vect3Df pos, in Vect3Df rot) {
 		m_parent = parent;
 		if(m_parent !is null)
 			m_parent.AddChild(this);
@@ -162,7 +162,7 @@ abstract class Node {
 
 	mixin template NodeCtor()
 	{
-		this(ref Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
+		this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
 			super(parent, pos, rot);
 		}
 	}
