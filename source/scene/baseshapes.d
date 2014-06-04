@@ -44,12 +44,12 @@ class Tetrahedron : NodeModel {
 		//writeln("Render");
 		glUseProgram(m_prog);
 
-			glBindBuffer(GL_ARRAY_BUFFER, m_vbo.id);
-				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
-				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
-				glEnableVertexAttribArray(0);
-				glEnableVertexAttribArray(1);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			m_vbo.Bind();
+			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
+			glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			Vbo.Unbind();
 
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
@@ -119,12 +119,12 @@ class Cube : NodeModel {
 		glUseProgram(m_prog);
 
 
-			glBindBuffer(GL_ARRAY_BUFFER, m_vbo.id);
+			m_vbo.Bind();
 				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
 				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
 				glEnableVertexAttribArray(0);
 				glEnableVertexAttribArray(1);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			Vbo.Unbind();
 
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
@@ -175,15 +175,15 @@ class Crate : Cube {
 	override void Render(ref mat4 proj, ref mat4 mdlview){
 		glUseProgram(m_prog);
 
-			glBindBuffer(GL_ARRAY_BUFFER, m_vbo.id);
+			m_vbo.Bind();
 				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[0]));
 				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo.offset[1]));
 				glEnableVertexAttribArray(0);
 				glEnableVertexAttribArray(1);
-			glBindBuffer(GL_ARRAY_BUFFER, m_vbotext.id);
+			m_vbotext.Bind();
 				glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, cast(void*)(m_vbotext.offset[0]));
 				glEnableVertexAttribArray(2);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			Vbo.Unbind();
 
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);

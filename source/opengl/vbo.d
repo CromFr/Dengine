@@ -32,26 +32,34 @@ class Vbo{
 		foreach(d ; data){
 			m_dataindex ~= index;
 			dataarray ~= cast(void[])(d);
-			index += d.length * d[0].sizeof;
+			uint length = to!uint(d.length * d[0].sizeof);
+			index += length;
+			m_datalength ~= length;
 		}
+		m_totallength = to!uint(dataarray.length);
 
 		//prepare
 		glGenBuffers(1, &m_id);
 		if(m_id==0)
 			throw new VboException("Created invalid ID", VboException.Type.Creation);
 
-		//Bind
-		glBindBuffer(GL_ARRAY_BUFFER, m_id);
+		Bind();
 
-		m_datalength = dataarray.length;
+		//Load data
 		//glBufferData(GLenum target, GLsizeiptr size, const GLvoid *data, GLenum  usage)
-		glBufferData(GL_ARRAY_BUFFER, m_datalength, dataarray.ptr, update);
+		glBufferData(GL_ARRAY_BUFFER, m_totallength, dataarray.ptr, update);
 
-		//unbind
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		Unbind();
 	}
 	~this(){
 		glDeleteBuffers(1, &m_id);
+	}
+
+	void Bind(){
+		glBindBuffer(GL_ARRAY_BUFFER, m_id);
+	}
+	static void Unbind(){
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 
@@ -59,16 +67,20 @@ class Vbo{
 		assert(i<m_dataindex.length, "Index out of bound");
 
 		if(    (i+1<m_dataindex.length && m_dataindex[i]+data.sizeof<=m_dataindex[i+1])
-			|| (m_dataindex[i]+data.sizeof<=m_datalength)
+			|| (m_dataindex[i]+data.sizeof<=m_totallength)
 			){
-			glBufferSubData(GL_ARRAY_BUFFER, m_dataindex[i], m_datalength, data.ptr);
+			glBufferSubData(GL_ARRAY_BUFFER, m_dataindex[i], m_datalength[i], data.ptr);
 			}
 		else
 			throw new VboException("No space to load data in the cell", VboException.Type.NoSpace);
 	}
 
 	@property{
-		uint id()const {return m_id;}
+		uint id()const{return m_id;}
+
+		uint[] length()const{
+			return m_datalength.dup;
+		}
 		uint[] offset()const{
 			return m_dataindex.dup;
 		}
@@ -76,9 +88,10 @@ class Vbo{
 
 private:
 	uint m_id;
-	size_t m_datalength;
 	Rate m_update;
 
+	uint m_totallength;
 	uint m_dataindex[];
+	uint m_datalength[];
 
 }
