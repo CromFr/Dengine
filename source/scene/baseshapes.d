@@ -165,7 +165,7 @@ class Crate : Cube {
 			~tr~br~bl~tr~bl~tl
 			~tr~br~bl~tr~bl~tl;
 
-		m_texture = Resource.Get!Texture("crate.jpg").id;
+		m_texture = Resource.Get!Texture("crate.jpg");
 		m_prog = Resource.Get!Program("texture.prg").id;
 
 		try{
@@ -195,17 +195,17 @@ class Crate : Cube {
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "projection"), 1, true, proj.value_ptr);
 			glUniformMatrix4fv(glGetUniformLocation(m_prog, "modelview"), 1, true, mdlview.value_ptr);
 			
-			glBindTexture(GL_TEXTURE_2D, m_texture);
+			m_texture.Bind();
 
 			glDrawArrays(GL_TRIANGLES, 0, to!int(m_vertices.length/3));
 
-			glBindTexture(GL_TEXTURE_2D, 0);
+			Texture.Unbind();
 			
 			Vao.Unbind();
 		glUseProgram(0);
 	}
 
-	uint m_texture;
+	Texture m_texture;
 	float m_texturecoord[];
 	Vbo m_vbotext;
 }

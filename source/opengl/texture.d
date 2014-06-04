@@ -75,6 +75,13 @@ class Texture {
 		glDeleteTextures(1, &m_id);
 	}
 
+	void Bind()const{
+		glBindTexture(GL_TEXTURE_2D, m_id);
+	}
+	static void Unbind(){
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	@property{
 		uint id() const{return m_id;}
 	}
