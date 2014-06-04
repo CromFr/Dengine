@@ -14,6 +14,11 @@ class VaoException : Exception{
 	immutable Type type;
 }
 
+/**
+	Vertex Array Object
+	Preloads some functions to be executed on the GPU while rendering
+	Notes: Needs to be binded to render something
+**/
 class Vao{
 
 	this(void delegate() f){

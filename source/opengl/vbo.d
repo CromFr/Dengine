@@ -17,6 +17,7 @@ class VboException : Exception{
 /**
 	Vertex Buffer Object
 	Handles data stored in the GPU VRAM
+	Notes: Needs to be binded to load stored resources
 **/
 class Vbo{
 	enum Rate{
