@@ -35,10 +35,10 @@ void main()
 
 	Cube cube = new Cube(eng.rootNode, Vect3Df(-2,0,-5));
 	cube.onUpdated.Call({
-		cube.RotateX(-1);
-		cube.RotateZ(-1);
+		cube.RotateX(-0.1);
+		cube.RotateZ(-0.1);
 	});
-	auto cube2 = new Cube(cube, Vect3Df(1.0,0,0), Vect3Df(0,0,0), Vect3Df(0.5,0.5,0.5));
+	auto cube2 = new Cube(cube, Vect3Df(1.0,0,0), Vect3Df(45,45,0), Vect3Df(0.5,0.5,0.5));
 
 	auto crate = new Crate(eng.rootNode, Vect3Df(0,0,-5));
 	crate.onUpdated.Call({

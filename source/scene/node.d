@@ -89,8 +89,9 @@ abstract class Node {
 	@property final {
 		Vect3Df rotation()const{return m_rot;}
 		void rotation(in Vect3Df rot){
-			m_rot = rot;
-			m_matrot = mat4.identity;//RotationMatrix(m_rot);
+			std.stdio.writeln(rot);
+			m_rot = rot*(PI/180.0);
+			m_matrot = RotationMatrix(m_rot);
 			m_matChange = true;
 		}
 

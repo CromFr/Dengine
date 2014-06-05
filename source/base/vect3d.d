@@ -20,9 +20,19 @@ struct Vect3D(T) {
 	bool opEquals(const Vect3D!T other)const{
 	  return (m_x==other.m_x && m_y==other.m_y && m_z==other.m_z);
 	}
+
 	Vect3D!T opBinary(string op)(const Vect3D!T other)const{
 		return Vect3D!T(mixin("m_x "~op~" other.m_x"), mixin("m_y "~op~" other.m_y"), mixin("m_z "~op~" other.m_z"));
 	}
+	Vect3D!T opBinary(string op, O)(const O other)const
+		if(__traits(isArithmetic, O)){
+		return Vect3D!T(mixin("m_x "~op~" other"), mixin("m_y "~op~" other"), mixin("m_z "~op~" other"));
+	}
+
+	T[] opSlice(){
+		return [m_x, m_y, m_z];
+	}
+
 	void opOpAssign(string op)(const Vect3D!T other){
 		mixin("this.m_x "~op~"= other.m_x;");
 		mixin("this.m_y "~op~"= other.m_y;");
@@ -36,6 +46,8 @@ struct Vect3D(T) {
 		}
 		return tmp;
 	}
+
+
 
 
 private:

@@ -21,9 +21,9 @@ mat4 RotationMatrix(in float fX, in float fY, in float fZ){
 		float cxsy = cosx*siny;
 
 		return mat4(
-			cosy*cosz,				cosy*cosz,				-siny,		0,
-			sxsy*cosz-cosx*cosz,	sxsy*cosz+cosx*cosz,	sinx*cosy,	0,
-			cxsy*cosz+sinx*cosz,	cxsy*cosz-sinx*cosz,	cosx*cosy,	0,
-			0,						0,						0,			0
+			cosy*cosz,				cosy*sinz,				-siny,		0,
+			sxsy*cosz-cosx*sinz,	sxsy*sinz+cosx*cosz,	sinx*cosy,	0,
+			cxsy*cosz+sinx*sinz,	cxsy*sinz-sinx*cosz,	cosx*cosy,	0,
+			0,						0,						0,			1
 		);
 }
