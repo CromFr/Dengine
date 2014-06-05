@@ -87,40 +87,12 @@ abstract class Node {
 		Rotations
 	*/
 	@property final {
-		Vect3Df rotation()const{return m_rot;}
+		Vect3Df rotation()const{return m_rot*(180.0/PI);}
 		void rotation(in Vect3Df rot){
 			m_rot = rot*(PI/180.0);
 			m_matrot = RotationMatrix(m_rot);
 			m_matChange = true;
 		}
-
-		//Vect3Df rotationAbsolute(){
-		//	//TODO Make function const
-		//	Vect3Df ret;
-		//	//ret+=this.m_rot;
-		//	//const(Node)* p = &m_parent;
-		//	//while(*p !is null){
-		//	//	p = &p.m_parent;
-		//	//	ret+=p.m_rot;
-		//	//}
-		//	Node p = this;
-		//	do{
-		//		ret+=p.m_rot;
-		//	}while((p=p.parent) !is null);
-
-		//	return ret;
-		//}
-		//void rotationAbsolute(const ref Vect3Df rot){
-		//	m_rot += rot-rotationAbsolute;
-		//}
-
-
-		//Vect3Df rotationToNode(ref Node node){
-		//	return node.rotationAbsolute - rotationAbsolute;
-		//}
-		//void rotationToNode(ref Node node, ref Vect3Df rot){
-		//	m_rot += rot-rotationToNode(node);
-		//}
 	}
 
 	@property final {
@@ -139,21 +111,27 @@ abstract class Node {
 		}
 
 		void RotateX(float degrees){
-			m_matrot = m_matrot.rotatex(degrees*(PI/180.0));
+			float fRad = degrees*(PI/180.0);
+			m_rot.x = m_rot.x+fRad;
+			m_matrot = m_matrot.rotatex(-fRad);
 			m_matChange = true;
 		}
 		void RotateY(float degrees){
-			m_matrot = m_matrot.rotatey(degrees*(PI/180.0));
+			float fRad = degrees*(PI/180.0);
+			m_rot.y = m_rot.y+fRad;
+			m_matrot = m_matrot.rotatey(-fRad);
 			m_matChange = true;
 		}
 		void RotateZ(float degrees){
-			m_matrot = m_matrot.rotatez(degrees*(PI/180.0));
+			float fRad = degrees*(PI/180.0);
+			m_rot.z = m_rot.z+fRad;
+			m_matrot = m_matrot.rotatez(-fRad);
 			m_matChange = true;
 		}
 
 		void Resize(in Vect3Df ratio){
-			//TODO Implement
-			//m_matscale = 
+			m_scale *= ratio;
+			m_matscale = m_matscale * mat4.scaling(scale.x, scale.y, scale.z);
 			m_matChange = true;
 		}
 
