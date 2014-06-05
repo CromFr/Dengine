@@ -2,21 +2,20 @@ module scene.node;
 
 import std.stdio;
 import derelict.opengl3.gl3;
+import math.utils;
 
 public import base.vect3d;
 public import base.callback;
 public import gl3n.linalg;
 
 abstract class Node {
-	final this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)) {
+	final this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)) {
 		m_parent = parent;
 		if(m_parent !is null)
 			m_parent.AddChild(this);
-		m_pos = pos;
-		m_matpos = mat4.translation(pos.x, pos.y, pos.z);
-		m_rot = rot;
-		m_matrot = mat4.identity;
-		UpdateMatrix();
+
+		position = pos;
+		rotation = rot;
 	}
 	final ~this(){
 		foreach(ref child ; m_children)
@@ -48,9 +47,10 @@ abstract class Node {
 	*/
 	@property final {
 		Vect3Df position()const{return m_pos;}
-		void position(const ref Vect3Df pos){
+		void position(in Vect3Df pos){
 			m_pos = pos;
-			m_matpos = m_matpos.translation(pos.x, pos.y, pos.z);
+			m_matpos = mat4.translation(pos.x, pos.y, pos.z);
+			m_matChange = true;
 		}
 
 		//Vect3Df positionAbsolute(){
@@ -86,11 +86,12 @@ abstract class Node {
 		Rotations
 	*/
 	@property{
-		//Vect3Df rotation()const{return m_rot;}
-		//void rotation(const ref Vect3Df rot){
-		//	m_rot = rot;
-		//	m_matpos = translation(pos);
-		//}
+		Vect3Df rotation()const{return m_rot;}
+		void rotation(in Vect3Df rot){
+			m_rot = rot;
+			m_matrot = RotationMatrix(rot);
+			m_matChange = true;
+		}
 
 		//Vect3Df rotationAbsolute(){
 		//	//TODO Make function const
@@ -124,20 +125,20 @@ abstract class Node {
 	final{
 		void Move(in Vect3Df mov){
 			m_matpos = m_matpos.translate(mov.x, mov.y, mov.z);
-			UpdateMatrix();
+			m_matChange = true;
 		}
 
 		void RotateX(float degrees){
 			m_matrot = m_matrot.rotatex(degrees*(PI/180.0));
-			UpdateMatrix();
+			m_matChange = true;
 		}
 		void RotateY(float degrees){
 			m_matrot = m_matrot.rotatey(degrees*(PI/180.0));
-			UpdateMatrix();
+			m_matChange = true;
 		}
 		void RotateZ(float degrees){
 			m_matrot = m_matrot.rotatez(degrees*(PI/180.0));
-			UpdateMatrix();
+			m_matChange = true;
 		}
 
 		void EngineRender(ref mat4 proj, mat4 mdlview){
@@ -152,6 +153,10 @@ abstract class Node {
 
 		void Update(bool updateChildren=true){
 			m_onupdated.Execute();
+
+			if(m_matChange)
+				UpdateMatrix();
+
 			if(updateChildren)
 				foreach(ref child ; m_children)child.Update();
 		}
@@ -162,7 +167,7 @@ abstract class Node {
 
 	mixin template NodeCtor()
 	{
-		this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0)){
+		this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)){
 			super(parent, pos, rot);
 		}
 	}
@@ -173,9 +178,13 @@ protected:
 	mat4 m_matmodel;
 
 private:
+	bool m_matChange = true;
 	Vect3Df m_pos, m_rot, m_scale;
 	mat4 m_matpos, m_matrot, m_matscale;
-	void UpdateMatrix(){m_matmodel = m_matpos*m_matrot;}
+	void UpdateMatrix(){
+		m_matmodel = m_matpos*m_matrot*m_matscale;
+		m_matChange = false;
+	}
 	
 
 	bool m_visible = true;
