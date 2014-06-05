@@ -180,13 +180,33 @@ class Axis : NodeModel {
 								0,0,0, 0,1,0,
 								0,0,0, 0,0,1];
 
+			float verticesarrow[]= [
+				1,0,0, 0.9,0.05,0, 0.9,-0.05,0,
+				1,0,0, 0.9,-0.05,0, 0.9,0.05,0,
+				1,0,0, 0.9,0,0.05, 0.9,0,-0.05,
+				1,0,0, 0.9,0,-0.05, 0.9,0,0.05,
+
+				0,1,0, 0.05,0.9,0, -0.05,0.9,0,
+				0,1,0, -0.05,0.9,0, 0.05,0.9,0,
+				0,1,0, 0,0.9,0.05, 0,0.9,-0.05,
+				0,1,0, 0,0.9,-0.05, 0,0.9,0.05,
+
+				0,0,1, 0.05,0,0.9, -0.05,0,0.9,
+				0,0,1, -0.05,0,0.9, 0.05,0,0.9,
+				0,0,1, 0,0.05,0.9, 0,-0.05,0.9,
+				0,0,1, 0,-0.05,0.9, 0,0.05,0.9
+				];
+
 			enum r = [1,0,0];
 			enum g = [0,1,0];
 			enum b = [0,0,1];
 
 			float colors[] = r~r~g~g~b~b;
+			float colorsarrow[] =	r~r~r~ r~r~r~ r~r~r~ r~r~r~
+									g~g~g~ g~g~g~ g~g~g~ g~g~g~
+									b~b~b~ b~b~b~ b~b~b~ b~b~b;
 
-			m_vbo ~= Resource.CreateRes!Vbo("AxisData", Vbo.Rate.Rarely, vertices, colors);
+			m_vbo ~= Resource.CreateRes!Vbo("AxisData", Vbo.Rate.Rarely, vertices, colors, verticesarrow, colorsarrow);
 		}
 
 		try m_vao = Resource.Get!Vao("Axis");
@@ -200,5 +220,45 @@ class Axis : NodeModel {
 				Vbo.Unbind();
 			});
 		}
+
+		try m_vaoarrow = Resource.Get!Vao("AxisArrow");
+		catch(ResourceException e){
+			m_vaoarrow = Resource.CreateRes!Vao("AxisArrow", {
+				m_vbo[0].Bind();
+				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo[0].offset[2]));
+				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo[0].offset[3]));
+				glEnableVertexAttribArray(0);
+				glEnableVertexAttribArray(1);
+				Vbo.Unbind();
+			});
+		}
 	}
+
+	override void Render(ref mat4 proj, ref mat4 mdlview){
+		immutable pid = m_prog.id;
+		glUseProgram(pid);
+		m_vao.Bind();
+
+		//Send matrix
+		glUniformMatrix4fv(glGetUniformLocation(pid, "projection"), 1, true, proj.value_ptr);
+		glUniformMatrix4fv(glGetUniformLocation(pid, "modelview"), 1, true, mdlview.value_ptr);
+		
+		//Render !    
+		glDrawArrays(m_drawmode, 0, m_vertexCount);
+
+		m_vaoarrow.Bind();
+
+		//Send matrix
+		glUniformMatrix4fv(glGetUniformLocation(pid, "projection"), 1, true, proj.value_ptr);
+		glUniformMatrix4fv(glGetUniformLocation(pid, "modelview"), 1, true, mdlview.value_ptr);
+		
+		//Render !    
+		glDrawArrays(DrawMode.Triangle, 0, 3*12);
+
+		Vao.Unbind();
+		glUseProgram(0);
+	}
+
+private:
+	Vao m_vaoarrow;
 }
