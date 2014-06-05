@@ -14,8 +14,8 @@ import resource;
 
 
 class Tetrahedron : NodeModel {
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)){
-		super(6, parent, pos, rot, scale);
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		super(6, parent, pos, rot, sca);
 		drawMode = DrawMode.TriangleStrip;
 		
 		//Load data in VBO, create it if not exist
@@ -61,8 +61,8 @@ class Tetrahedron : NodeModel {
 
 
 class Cube : NodeModel {
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)){
-		super(36, parent, pos, rot, scale);
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		super(36, parent, pos, rot, sca);
 
 		try m_vbo ~= Resource.Get!Vbo("CubeData");
 		catch(ResourceException e){
@@ -121,8 +121,8 @@ class Cube : NodeModel {
 
 class Crate : Cube {
 
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)){
-		super(parent, pos, rot, scale);
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		super(parent, pos, rot, sca);
 		m_prog = Resource.Get!Program("texture.prg");
 
 		Texture texture = Resource.Get!Texture("crate.jpg");
@@ -167,8 +167,8 @@ class Crate : Cube {
 
 
 class Axis : NodeModel {
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)){
-		super(6, parent, pos, rot, scale);
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		super(6, parent, pos, rot, sca);
 
 		drawMode = DrawMode.Line;
 		m_prog = Resource.Get!Program("default.prg");

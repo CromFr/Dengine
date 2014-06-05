@@ -9,13 +9,14 @@ public import base.callback;
 public import gl3n.linalg;
 
 abstract class Node {
-	final this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)) {
+	final this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)) {
 		m_parent = parent;
 		if(m_parent !is null)
 			m_parent.AddChild(this);
 
 		position = pos;
 		rotation = rot;
+		scale = sca;
 	}
 	final ~this(){
 		foreach(ref child ; m_children)
@@ -49,7 +50,7 @@ abstract class Node {
 		Vect3Df position()const{return m_pos;}
 		void position(in Vect3Df pos){
 			m_pos = pos;
-			m_matpos = mat4.translation(pos.x, pos.y, pos.z);
+			m_matpos = mat4.translation(m_pos.x, m_pos.y, m_pos.z);
 			m_matChange = true;
 		}
 
@@ -85,11 +86,11 @@ abstract class Node {
 	/**
 		Rotations
 	*/
-	@property{
+	@property final {
 		Vect3Df rotation()const{return m_rot;}
 		void rotation(in Vect3Df rot){
 			m_rot = rot;
-			m_matrot = RotationMatrix(rot);
+			m_matrot = mat4.identity;//RotationMatrix(m_rot);
 			m_matChange = true;
 		}
 
@@ -122,6 +123,15 @@ abstract class Node {
 		//}
 	}
 
+	@property final {
+		Vect3Df scale()const{return m_scale;}
+		void scale(in Vect3Df scale){
+			m_scale = scale;
+			m_matscale = mat4.scaling(scale.x, scale.y, scale.z);
+			m_matChange = true;
+		}
+	}
+
 	final{
 		void Move(in Vect3Df mov){
 			m_matpos = m_matpos.translate(mov.x, mov.y, mov.z);
@@ -138,6 +148,12 @@ abstract class Node {
 		}
 		void RotateZ(float degrees){
 			m_matrot = m_matrot.rotatez(degrees*(PI/180.0));
+			m_matChange = true;
+		}
+
+		void Resize(in Vect3Df ratio){
+			//TODO Implement
+			//m_matscale = 
 			m_matChange = true;
 		}
 
@@ -167,8 +183,8 @@ abstract class Node {
 
 	mixin template NodeCtor()
 	{
-		this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)){
-			super(parent, pos, rot);
+		this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+			super(parent, pos, rot, sca);
 		}
 	}
 

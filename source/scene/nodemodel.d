@@ -9,8 +9,8 @@ import derelict.opengl3.gl3;
 import derelict.glfw3.glfw3;
 
 abstract class NodeModel : Node {
-	this(in uint vertexCount, Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df scale=Vect3Df(0,0,0)) {
-		super(parent, pos, rot, scale);
+	this(in uint vertexCount, Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)) {
+		super(parent, pos, rot, sca);
 		m_vertexCount = vertexCount;
 	}
 
