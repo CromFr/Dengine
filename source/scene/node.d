@@ -8,7 +8,14 @@ public import base.vect3d;
 public import base.callback;
 public import gl3n.linalg;
 
+/**
+	Node in the 3d scene
+*/
 abstract class Node {
+	/**
+		Constructs the node on a parent node
+		Notes: The first parent is created by the engine, and is retrieved with engine.rootNode. If parent is null, the node will not be updated nor rendered
+	*/
 	final this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)) {
 		m_parent = parent;
 		if(m_parent !is null)
@@ -23,23 +30,49 @@ abstract class Node {
 			child.destroy();
 	}
 
+	/**
+		Registers a node as the child of this node
+	*/
 	void AddChild(ref Node child){
 		m_children~=child;
 	}
 
-	//Override-able functions
+	/**
+		Override it if the node must be rendered
+		Warning: Should not be called manually
+	*/
 	void Render(ref mat4 proj, ref mat4 mdlview){}
 	
 
 	@property final {
+		/**
+			Is node rendered
+		*/
 		bool visible()const{return m_visible;}
+
+		/**
+			ditto
+		*/
 		void visible(bool visible){m_visible = visible;}
 
+		/**
+			Parent node
+		*/
 		ref Node parent(){return m_parent;}
+
+		/**
+			ditto
+		*/
 		void parent(ref Node parent){m_parent = parent;}
 
-		//Callbacks
+		/**
+			Callback to execute when the node is rendered
+		*/
 		ref Callback onRendered(){return m_onrendered;}
+
+		/**
+			Callback to execute when the node is updated
+		*/
 		ref Callback onUpdated(){return m_onupdated;}
 	}
 
