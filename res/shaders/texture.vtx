@@ -1,4 +1,4 @@
-#version 330
+#version 130
 in vec3 in_Vertex;
 in vec2 in_TexCoord0;
 uniform mat4 projection;
