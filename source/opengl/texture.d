@@ -8,6 +8,9 @@ import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
+/**
+	Exception thrown when dealing with the Texture class
+*/
 class TextureException : Exception{
 	enum Type{
 		Format
@@ -24,7 +27,14 @@ class TextureException : Exception{
 	immutable string filepath;
 }
 
+/**
+	Load the texture from file to render it on an object
+*/
 class Texture {
+
+	/**
+		Creates the texture from a file. Supported formats are the same that sdl-image
+	*/
 	this(DirEntry file) {
 		m_filepath = file.name;
 
@@ -75,13 +85,23 @@ class Texture {
 		glDeleteTextures(1, &m_id);
 	}
 
+	/**
+		Activates the texture for rendering
+	*/
 	void Bind()const{
 		glBindTexture(GL_TEXTURE_2D, m_id);
 	}
+
+	/**
+		Deactivates the texture for rendering
+	*/
 	static void Unbind(){
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	/**
+		OpenGL Object ID
+	*/
 	@property{
 		uint id() const{return m_id;}
 	}
