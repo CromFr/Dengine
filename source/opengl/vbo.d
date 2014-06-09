@@ -56,7 +56,7 @@ class Vbo{
 		glDeleteBuffers(1, &m_id);
 	}
 
-	void Bind(){
+	void Bind()const{
 		glBindBuffer(GL_ARRAY_BUFFER, m_id);
 	}
 	static void Unbind(){

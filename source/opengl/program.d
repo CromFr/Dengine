@@ -70,6 +70,13 @@ class Program {
 		bool linked()const{return m_linked;}
 	}
 
+	void Bind()const{
+		glUseProgram(m_id);
+	}
+	static void Unbind(){
+		glUseProgram(0);
+	}
+
 
 private:
 	immutable uint m_id;

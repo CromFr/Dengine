@@ -36,7 +36,7 @@ class Vao{
 		glDeleteVertexArrays(1, &m_id);
 	}
 
-	void Bind(){
+	void Bind()const{
 		glBindVertexArray(m_id);
 	}
 	static void Unbind(){
