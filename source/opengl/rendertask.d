@@ -32,7 +32,7 @@ class RenderTask{
 	}
 
 	
-	this(in Program prg, in DrawMode drawMode, in uint vertexCount){
+	this(Program prg, in DrawMode drawMode, in uint vertexCount){
 		m_prog = prg;
 		m_drawMode = drawMode;
 		m_vertexCount = vertexCount;
@@ -68,8 +68,11 @@ class RenderTask{
 	}
 
 	@property{
-		DrawMode drawMode(){return m_drawMode;}
+		DrawMode drawMode()const{return m_drawMode;}
 		void drawMode(in DrawMode drawMode){m_drawMode = drawMode;}
+
+		Program program(){return m_prog;}
+		void program(Program p){m_prog = p;}
 	}
 
 protected:
@@ -113,7 +116,7 @@ protected:
 						glEnableVertexAttribArray(va.destination);
 					}
 					Vbo.Unbind();
-					
+
 					if(m_texture !is null)
 						m_texture.Bind();
 				});
@@ -121,7 +124,7 @@ protected:
 		}
 	}
 
-	const Program m_prog;
+	Program m_prog;
 	const uint m_vertexCount;
 	DrawMode m_drawMode;
 

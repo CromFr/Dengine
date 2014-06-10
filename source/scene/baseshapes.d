@@ -19,7 +19,7 @@ class Tetrahedron : NodeModel {
 		
 		Vbo vbo;
 		//Load data in VBO, create it if not exist
-		try vbo = Resource.Get!Vbo(typeof(this).stringof);
+		try vbo = Resource.Get!Vbo("_Tetrahedron");
 		catch(ResourceException e){
 
 			enum A = [0,0,sqrt(2.0/3.0)-1.0/(2.0*sqrt(6.0))];
@@ -36,7 +36,7 @@ class Tetrahedron : NodeModel {
 
 			float colors[] = r~g~b~y~r~g;
 
-			vbo = Resource.CreateRes!Vbo(typeof(this).stringof, Vbo.Rate.Rarely, vertices, colors);
+			vbo = Resource.CreateRes!Vbo("_Tetrahedron", Vbo.Rate.Rarely, vertices, colors);
 		}
 
 		auto rt = new RenderTask(
@@ -46,10 +46,10 @@ class Tetrahedron : NodeModel {
 
 		rt.AssignVertex(vbo, 
 				VertexAddress(0, 3, 0),
-				VertexAddress(1, 2, 1),
+				VertexAddress(1, 3, 1),
 		);
 
-		rt.Prepare(typeof(this).stringof);
+		rt.Prepare("_Tetrahedron");
 
 		m_renderTasks ~= rt;
 	}
@@ -60,110 +60,101 @@ class Tetrahedron : NodeModel {
 
 class Cube : NodeModel {
 	mixin NodeCtor;
-	//this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
-	//	super(parent, pos, rot, sca);
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		super(parent, pos, rot, sca);
 
-	//	Vbo vbo;
-	//	try vbo = Resource.Get!Vbo("CubeData");
-	//	catch(ResourceException e){
-	//		enum A = [0.5,	0.5,	0.5];
-	//		enum B = [0.5,	-0.5,	0.5];
-	//		enum C = [-0.5,	-0.5,	0.5];
-	//		enum D = [-0.5,	0.5,	0.5];
+		Vbo vbo;
+		try vbo = Resource.Get!Vbo("_Cube");
+		catch(ResourceException e){
+			enum A = [0.5,	0.5,	0.5];
+			enum B = [0.5,	-0.5,	0.5];
+			enum C = [-0.5,	-0.5,	0.5];
+			enum D = [-0.5,	0.5,	0.5];
 
-	//		enum E = [0.5,	0.5,	-0.5];
-	//		enum F = [0.5,	-0.5,	-0.5];
-	//		enum G = [-0.5,	-0.5,	-0.5];
-	//		enum H = [-0.5,	0.5,	-0.5];
+			enum E = [0.5,	0.5,	-0.5];
+			enum F = [0.5,	-0.5,	-0.5];
+			enum G = [-0.5,	-0.5,	-0.5];
+			enum H = [-0.5,	0.5,	-0.5];
 
-	//		float vertices[] = 
-	//			 A~B~C~A~C~D
-	//			~B~F~G~B~G~C
-	//			~A~E~F~A~F~B
-	//			~E~H~G~E~G~F
-	//			~D~C~G~D~G~H
-	//			~E~A~D~E~D~H;
+			float vertices[] = 
+				 A~B~C~A~C~D
+				~B~F~G~B~G~C
+				~A~E~F~A~F~B
+				~E~H~G~E~G~F
+				~D~C~G~D~G~H
+				~E~A~D~E~D~H;
 
-	//		enum r = [1,0,0];
-	//		enum g = [0,1,0];
-	//		enum b = [0,0,1];
-	//		enum y = [1,1,0];
-	//		enum c = [0,1,1];
-	//		enum m = [1,0,1];
+			enum r = [1,0,0];
+			enum g = [0,1,0];
+			enum b = [0,0,1];
+			enum y = [1,1,0];
+			enum c = [0,1,1];
+			enum m = [1,0,1];
 
-	//		float colors[] =
-	//			 r~r~r~r~r~r
-	//			~g~g~g~g~g~g
-	//			~b~b~b~b~b~b
-	//			~y~y~y~y~y~y
-	//			~c~c~c~c~c~c
-	//			~m~m~m~m~m~m;
+			float colors[] =
+				 r~r~r~r~r~r
+				~g~g~g~g~g~g
+				~b~b~b~b~b~b
+				~y~y~y~y~y~y
+				~c~c~c~c~c~c
+				~m~m~m~m~m~m;
 
-	//		vbo = Resource.CreateRes!Vbo("CubeData", Vbo.Rate.Rarely, vertices, colors);
-	//	}
+			vbo = Resource.CreateRes!Vbo("_Cube", Vbo.Rate.Rarely, vertices, colors);
+		}
 
+		auto rt = new RenderTask(
+			Resource.Get!Program("default.prg"),
+			RenderTask.DrawMode.Triangle, 36
+		);
 
-	//	m_renderTasks = new RenderTask(
-	//		Resource.Get!Program("default.prg"),
-	//		RenderTask.DrawMode.Triangle, 36, 
-	//		"Cube", 
-	//		vbo, true, null
-	//	);
-	//}
+		rt.AssignVertex(vbo, 
+				VertexAddress(0, 3, 0),
+				VertexAddress(1, 3, 1),
+		);
+
+		rt.Prepare("_Cube");
+
+		m_renderTasks ~= rt;
+	}
 }
 
 
 class Crate : Cube {
 	mixin NodeCtor;
-	//this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
-	//	super(parent, pos, rot, sca);
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		super(parent, pos, rot, sca);
 
-	//	Texture texture = Resource.Get!Texture("crate.jpg");
+		Vbo vbo;
+		try vbo = Resource.Get!Vbo("_Crate");
+		catch(ResourceException e){
 
-	//	Vbo vbo;
-	//	try vbo = Resource.Get!Vbo("CrateText");
-	//	catch(ResourceException e){
+			enum bl = [0.0,0.0];
+			enum br = [1.0,0.0];
+			enum tl = [0.0,1.0];
+			enum tr = [1.0,1.0];
 
-	//		enum bl = [0.0,0.0];
-	//		enum br = [1.0,0.0];
-	//		enum tl = [0.0,1.0];
-	//		enum tr = [1.0,1.0];
+			float texturecoord[] = 
+				 tr~br~bl~tr~bl~tl
+				~br~tr~tl~br~tl~bl
+				~tl~tr~br~tl~br~bl
+				~tl~tr~br~tl~br~bl
+				~tr~br~bl~tr~bl~tl
+				~tr~br~bl~tr~bl~tl;
 
-	//		float texturecoord[] = 
-	//			 tr~br~bl~tr~bl~tl
-	//			~br~tr~tl~br~tl~bl
-	//			~tl~tr~br~tl~br~bl
-	//			~tl~tr~br~tl~br~bl
-	//			~tr~br~bl~tr~bl~tl
-	//			~tr~br~bl~tr~bl~tl;
+			vbo = Resource.CreateRes!Vbo("_Crate", Vbo.Rate.Rarely, texturecoord);
+		}
 
-	//		vbo = Resource.CreateRes!Vbo("CrateText", Vbo.Rate.Rarely, texturecoord);
-	//	}
+		m_renderTasks[0].program = Resource.Get!Program("texture.prg");
 
-	//	m_renderTasks[0] = new RenderTask(
-	//		Resource.Get!Program("default.prg"),
-	//		RenderTask.DrawMode.Triangle, 36, 
-	//		"Cube",
-	//		vbo, true, null
-	//	);
+		m_renderTasks[0].AssignVertex(vbo, 
+				VertexAddress(0, 2, 2)
+		);
+		auto text = Resource.Get!Texture("crate.jpg");
+		
+		m_renderTasks[0].AssignTexture(text);
 
-	//	try m_vao = Resource.Get!Vao("Crate");
-	//	catch(ResourceException e){
-	//		m_vao = Resource.CreateRes!Vao("Crate", {
-	//			m_vbo[0].Bind();
-	//			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo[0].offset[0]));
-	//			glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo[0].offset[1]));
-	//			glEnableVertexAttribArray(0);
-	//			glEnableVertexAttribArray(1);
-	//			m_vbo[1].Bind();
-	//			glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, cast(void*)(m_vbo[1].offset[0]));
-	//			glEnableVertexAttribArray(2);
-	//			Vbo.Unbind();
-
-	//			texture.Bind();
-	//		});
-	//	}
-	//}
+		m_renderTasks[0].Prepare("_Crate");
+	}
 }
 
 
