@@ -10,8 +10,14 @@ public import opengl.vbo;
 public import opengl.vao;
 public import opengl.texture;
 
+/**
+	Address of a data in a VBO
+*/
 alias VertexAddress = Tuple!(uint,"vboindex", uint,"dimension", uint,"destination");
 
+/**
+	An atomic rendering task
+*/
 class RenderTask{
 	enum DrawMode{
 		Point=GL_POINTS,
@@ -31,36 +37,55 @@ class RenderTask{
 		Patch=GL_PATCHES//TODO See how to use it (see glPatchParameteri(GL_PATCH_VERTICES, 16))
 	}
 
-	
-	this(Program prg, in DrawMode drawMode, in uint vertexCount){
+	/**
+		Creates a RenderTask with a program, drawmode and vertex count
+	*/
+	this(Program prg, in DrawMode drawMode, in uint vertexCount)
+	in{
+		assert(vertexCount>0, "RenderTasks with no vertex are not allowed");
+	}body{
 		m_prog = prg;
 		m_drawMode = drawMode;
 		m_vertexCount = vertexCount;
 	}
 
-	
+	/**
+		Associates the Task with VBO addresses containing the vertices/colors/texture coords/...
+	*/
 	void AssignVertex(Vbo vbo, VertexAddress[] links...){
 		foreach(l ; links){
 			m_vtxaddr ~= VertexAddressFull(vbo, l.vboindex, l.dimension, l.destination);
 		}
 	}
 
+	/**
+		The task will render a texture
+	*/
 	void AssignTexture(Texture texture){
 		m_texture = texture;
 	}
 
+	/**
+		Prepares the task to be rendered
+		Must be called at the end of the RenderTask initialization
+		Params:
+			vaoName: The name of the associated VAO. If a VAO with the same name exists in the resource manager, it will use it. You can put "" to always create a new VAO.
+	*/
 	void Prepare(in string vaoName){
 		ConstructVao(vaoName);
 	}
 
+	/**
+		Renders the task
+		Warning: The task must be prepared first !
+	*/
 	void Render(ref mat4 proj, ref mat4 mdlview)
 	in{
 		assert(m_prog !is null, "Program is null");
 		assert(m_vertexCount>0, "0 vertex RenderTasks are not allowed");
 		assert(m_vtxaddr.length>0, "No associated VBO");
 		assert(m_vao !is null, "RenderTask must be prepared before rendering");
-	}
-	body{
+	}body{
 		immutable pid = m_prog.id;
 		m_prog.Bind();
 		m_vao.Bind();
