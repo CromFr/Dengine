@@ -53,7 +53,14 @@ class RenderTask{
 		ConstructVao(vaoName);
 	}
 
-	void Render(ref mat4 proj, ref mat4 mdlview){
+	void Render(ref mat4 proj, ref mat4 mdlview)
+	in{
+		assert(m_prog !is null, "Program is null");
+		assert(m_vertexCount>0, "0 vertex RenderTasks are not allowed");
+		assert(m_vtxaddr.length>0, "No associated VBO");
+		assert(m_vao !is null, "RenderTask must be prepared before rendering");
+	}
+	body{
 		immutable pid = m_prog.id;
 		m_prog.Bind();
 		m_vao.Bind();
@@ -128,7 +135,6 @@ protected:
 	const uint m_vertexCount;
 	DrawMode m_drawMode;
 
-	bool m_bVaoConstructed = false;
 	VertexAddressFull m_vtxaddr[];
 	Vao m_vao;
 
