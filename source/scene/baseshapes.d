@@ -150,7 +150,7 @@ class Crate : Cube {
 				VertexAddress(0, 2, 2)
 		);
 		auto text = Resource.Get!Texture("crate.jpg");
-		
+
 		m_renderTasks[0].AssignTexture(text);
 
 		m_renderTasks[0].Prepare("_Crate");
@@ -160,98 +160,72 @@ class Crate : Cube {
 
 class Axis : NodeModel {
 	mixin NodeCtor;
-//	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
-//		super(6, parent, pos, rot, sca);
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		super(parent, pos, rot, sca);
 
-//		drawMode = DrawMode.Line;
-//		m_prog = Resource.Get!Program("default.prg");
+		Vbo vbo;
+		try vbo = Resource.Get!Vbo("_Axis");
+		catch(ResourceException e){
 
-//		try m_vbo ~= Resource.Get!Vbo("AxisData");
-//		catch(ResourceException e){
+			float vertices[]= [	0,0,0, 1,0,0,
+								0,0,0, 0,1,0,
+								0,0,0, 0,0,1];
 
-//			float vertices[]= [	0,0,0, 1,0,0,
-//								0,0,0, 0,1,0,
-//								0,0,0, 0,0,1];
+			float verticesarrow[]= [
+				1,0,0, 0.9,0.05,0, 0.9,-0.05,0,
+				1,0,0, 0.9,-0.05,0, 0.9,0.05,0,
+				1,0,0, 0.9,0,0.05, 0.9,0,-0.05,
+				1,0,0, 0.9,0,-0.05, 0.9,0,0.05,
 
-//			float verticesarrow[]= [
-//				1,0,0, 0.9,0.05,0, 0.9,-0.05,0,
-//				1,0,0, 0.9,-0.05,0, 0.9,0.05,0,
-//				1,0,0, 0.9,0,0.05, 0.9,0,-0.05,
-//				1,0,0, 0.9,0,-0.05, 0.9,0,0.05,
+				0,1,0, 0.05,0.9,0, -0.05,0.9,0,
+				0,1,0, -0.05,0.9,0, 0.05,0.9,0,
+				0,1,0, 0,0.9,0.05, 0,0.9,-0.05,
+				0,1,0, 0,0.9,-0.05, 0,0.9,0.05,
 
-//				0,1,0, 0.05,0.9,0, -0.05,0.9,0,
-//				0,1,0, -0.05,0.9,0, 0.05,0.9,0,
-//				0,1,0, 0,0.9,0.05, 0,0.9,-0.05,
-//				0,1,0, 0,0.9,-0.05, 0,0.9,0.05,
+				0,0,1, 0.05,0,0.9, -0.05,0,0.9,
+				0,0,1, -0.05,0,0.9, 0.05,0,0.9,
+				0,0,1, 0,0.05,0.9, 0,-0.05,0.9,
+				0,0,1, 0,-0.05,0.9, 0,0.05,0.9
+				];
 
-//				0,0,1, 0.05,0,0.9, -0.05,0,0.9,
-//				0,0,1, -0.05,0,0.9, 0.05,0,0.9,
-//				0,0,1, 0,0.05,0.9, 0,-0.05,0.9,
-//				0,0,1, 0,-0.05,0.9, 0,0.05,0.9
-//				];
+			enum r = [1,0,0];
+			enum g = [0,1,0];
+			enum b = [0,0,1];
 
-//			enum r = [1,0,0];
-//			enum g = [0,1,0];
-//			enum b = [0,0,1];
+			float colors[] = r~r~g~g~b~b;
+			float colorsarrow[] =	r~r~r~ r~r~r~ r~r~r~ r~r~r~
+									g~g~g~ g~g~g~ g~g~g~ g~g~g~
+									b~b~b~ b~b~b~ b~b~b~ b~b~b;
 
-//			float colors[] = r~r~g~g~b~b;
-//			float colorsarrow[] =	r~r~r~ r~r~r~ r~r~r~ r~r~r~
-//									g~g~g~ g~g~g~ g~g~g~ g~g~g~
-//									b~b~b~ b~b~b~ b~b~b~ b~b~b;
+			vbo = Resource.CreateRes!Vbo("_Axis", Vbo.Rate.Rarely, vertices, colors, verticesarrow, colorsarrow);
+		}
 
-//			m_vbo ~= Resource.CreateRes!Vbo("AxisData", Vbo.Rate.Rarely, vertices, colors, verticesarrow, colorsarrow);
-//		}
+		//Lines
+		auto rt = new RenderTask(
+			Resource.Get!Program("default.prg"),
+			RenderTask.DrawMode.Line, 6
+		);
 
-//		try m_vao = Resource.Get!Vao("Axis");
-//		catch(ResourceException e){
-//			m_vao = Resource.CreateRes!Vao("Axis", {
-//				m_vbo[0].Bind();
-//				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo[0].offset[0]));
-//				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo[0].offset[1]));
-//				glEnableVertexAttribArray(0);
-//				glEnableVertexAttribArray(1);
-//				Vbo.Unbind();
-//			});
-//		}
+		rt.AssignVertex(vbo, 
+				VertexAddress(0, 3, 0),
+				VertexAddress(1, 3, 1),
+		);
 
-//		try m_vaoarrow = Resource.Get!Vao("AxisArrow");
-//		catch(ResourceException e){
-//			m_vaoarrow = Resource.CreateRes!Vao("AxisArrow", {
-//				m_vbo[0].Bind();
-//				glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo[0].offset[2]));
-//				glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, cast(void*)(m_vbo[0].offset[3]));
-//				glEnableVertexAttribArray(0);
-//				glEnableVertexAttribArray(1);
-//				Vbo.Unbind();
-//			});
-//		}
-//	}
+		rt.Prepare("_AxisLines");
+		m_renderTasks ~= rt;
 
-//	override void Render(ref mat4 proj, ref mat4 mdlview){
-//		immutable pid = m_prog.id;
-//		glUseProgram(pid);
-//		m_vao.Bind();
+		//
+		auto rt2 = new RenderTask(
+			Resource.Get!Program("default.prg"),
+			RenderTask.DrawMode.Triangle, 36
+		);
 
-//		//Send matrix
-//		glUniformMatrix4fv(glGetUniformLocation(pid, "projection"), 1, true, proj.value_ptr);
-//		glUniformMatrix4fv(glGetUniformLocation(pid, "modelview"), 1, true, mdlview.value_ptr);
-		
-//		//Render !    
-//		glDrawArrays(m_drawmode, 0, m_vertexCount);
+		rt2.AssignVertex(vbo, 
+				VertexAddress(2, 3, 0),
+				VertexAddress(3, 3, 1),
+		);
 
-//		m_vaoarrow.Bind();
-
-//		//Send matrix
-//		glUniformMatrix4fv(glGetUniformLocation(pid, "projection"), 1, true, proj.value_ptr);
-//		glUniformMatrix4fv(glGetUniformLocation(pid, "modelview"), 1, true, mdlview.value_ptr);
-		
-//		//Render !    
-//		glDrawArrays(DrawMode.Triangle, 0, 3*12);
-
-//		Vao.Unbind();
-//		glUseProgram(0);
-//	}
-
-//private:
-//	Vao m_vaoarrow;
+		rt2.Prepare("_AxisArrows");
+		m_renderTasks ~= rt2;
+	}
 }
