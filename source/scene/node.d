@@ -122,9 +122,14 @@ abstract class Node {
 	@property final {
 		Vect3Df rotation()const{return m_rot*(180.0/PI);}
 		void rotation(in Vect3Df rot){
-			m_rot = rot*(PI/180.0);
-			m_matrot = RotationMatrix(m_rot);
-			m_matChange = true;
+			//m_rot = rot*(PI/180.0);
+			//m_matrot = RotationMatrix(m_rot);
+			//m_matChange = true;
+			m_rot = Vect3Df(0,0,0);
+			m_matrot = mat4.identity;
+			RotateX(rot.x);
+			RotateY(rot.y);
+			RotateZ(rot.z);
 		}
 	}
 
