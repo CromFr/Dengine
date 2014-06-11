@@ -59,7 +59,6 @@ class Tetrahedron : NodeModel {
 
 
 class Cube : NodeModel {
-	mixin NodeCtor;
 	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 
@@ -120,7 +119,6 @@ class Cube : NodeModel {
 
 
 class Crate : Cube {
-	mixin NodeCtor;
 	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 
@@ -159,7 +157,6 @@ class Crate : Cube {
 
 
 class Axis : NodeModel {
-	mixin NodeCtor;
 	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 
@@ -173,19 +170,13 @@ class Axis : NodeModel {
 
 			float verticesarrow[]= [
 				1,0,0, 0.9,0.05,0, 0.9,-0.05,0,
-				1,0,0, 0.9,-0.05,0, 0.9,0.05,0,
 				1,0,0, 0.9,0,0.05, 0.9,0,-0.05,
-				1,0,0, 0.9,0,-0.05, 0.9,0,0.05,
 
 				0,1,0, 0.05,0.9,0, -0.05,0.9,0,
-				0,1,0, -0.05,0.9,0, 0.05,0.9,0,
 				0,1,0, 0,0.9,0.05, 0,0.9,-0.05,
-				0,1,0, 0,0.9,-0.05, 0,0.9,0.05,
 
 				0,0,1, 0.05,0,0.9, -0.05,0,0.9,
-				0,0,1, -0.05,0,0.9, 0.05,0,0.9,
 				0,0,1, 0,0.05,0.9, 0,-0.05,0.9,
-				0,0,1, 0,-0.05,0.9, 0,0.05,0.9
 				];
 
 			enum r = [1,0,0];
@@ -193,9 +184,9 @@ class Axis : NodeModel {
 			enum b = [0,0,1];
 
 			float colors[] = r~r~g~g~b~b;
-			float colorsarrow[] =	r~r~r~ r~r~r~ r~r~r~ r~r~r~
-									g~g~g~ g~g~g~ g~g~g~ g~g~g~
-									b~b~b~ b~b~b~ b~b~b~ b~b~b;
+			float colorsarrow[] =	r~r~r~ r~r~r~ 
+									g~g~g~ g~g~g~ 
+									b~b~b~ b~b~b ;
 
 			vbo = Resource.CreateRes!Vbo("_Axis", Vbo.Rate.Rarely, vertices, colors, verticesarrow, colorsarrow);
 		}
@@ -217,7 +208,7 @@ class Axis : NodeModel {
 		//
 		auto rt2 = new RenderTask(
 			Resource.Get!Program("default.prg"),
-			RenderTask.DrawMode.Triangle, 36
+			RenderTask.DrawMode.Triangle, 18
 		);
 
 		rt2.AssignVertex(vbo, 
