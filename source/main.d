@@ -65,6 +65,11 @@ void main()
 		axis.RotateZ(-0.1);
 	});
 
+	auto teapot = new Teapot(eng.rootNode, Vect3Df(2,1,-5), Vect3Df(0,0,0), Vect3Df(0.01,0.01,0.01));
+	teapot.onUpdated.Call({
+		teapot.RotateY(0.3);
+	});
+
 
 	bool bRun=true;
 	while(bRun){
