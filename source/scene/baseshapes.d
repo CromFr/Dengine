@@ -220,3 +220,15 @@ class Axis : NodeModel {
 		m_renderTasks ~= rt2;
 	}
 }
+
+
+
+class Teapot : NodeModel{
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		super(parent, pos, rot, sca);
+
+		import tools.objloader;
+		m_renderTasks~=(new ObjLoader(DirEntry("res/models/teapot.obj"))).GetRenderTasks();
+	}
+
+}
