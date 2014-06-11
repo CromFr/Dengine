@@ -72,6 +72,7 @@ void main()
 
 
 	bool bRun=true;
+	bool bPause=false;
 	while(bRun){
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
@@ -79,11 +80,15 @@ void main()
 				case SDL_QUIT:
 					bRun = false;
 					break;
+				case SDL_MOUSEBUTTONDOWN:
+					bPause = !bPause;
+					break;
 				default:
 					break;
 			}
 		}
-		eng.Update();
+		if(!bPause)
+			eng.Update();
 		eng.Render();
 
 		Thread.sleep(dur!"msecs"(10));
