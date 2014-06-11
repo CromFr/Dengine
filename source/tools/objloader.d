@@ -28,15 +28,38 @@ class ObjLoader{
 
 				//Prepare Data
 				float vertices[];
-				float normals[];
 				float txtcoords[];
+				float normals[];
+
+				//fall to default if value is impossible
+				pure ref uint FallDef(ref uint i, in uint defIndex){
+					if(i==i.max) i = defIndex;
+					return i;
+				}
 
 				foreach(f ; g.faces){
-					vertices ~= g.vertices[f[0]-1]~g.vertices[f[3]-1]~g.vertices[f[6]-1];
+					vertices ~= 
+							 g.vertices[f[0]-1]
+							~g.vertices[f[3]-1]
+							~g.vertices[f[6]-1];
+
+					if(m_bHasTxtCoords){
+						txtcoords ~= 
+							 g.txtcoords[ FallDef(f[1],f[0])-1 ]
+							~g.txtcoords[ FallDef(f[4],f[3])-1 ]
+							~g.txtcoords[ FallDef(f[7],f[6])-1 ];
+					}
+
+					if(m_bHasNormals){
+						normals ~= 
+							 g.normals[ FallDef(f[2],f[0])-1 ]
+							~g.normals[ FallDef(f[5],f[3])-1 ]
+							~g.normals[ FallDef(f[8],f[6])-1 ];
+					}
 				}
 
 				//Use a unique VBO
-				auto vbo = new Vbo(Vbo.Rate.Rarely, vertices);
+				auto vbo = new Vbo(Vbo.Rate.Rarely, vertices, txtcoords, normals);
 
 
 				//RenderTask
@@ -122,6 +145,8 @@ private:
 
 			r=matchFirst(line, rgxVertex);
 			if(r){
+				m_bHasVertices = true;
+
 				string s[] = r[1].split;
 				float val[4] = to!(float[])(s[0..3])~(s.length==4 ? to!float(s[3]) : 1.0);
 				
@@ -131,6 +156,8 @@ private:
 
 			r=matchFirst(line, rgxNormal);
 			if(r){
+				m_bHasNormals = true;
+
 				string s[] = r[1].split;
 				
 				grp.normals ~= to!(float[])(s[])[0..3];//We do not use 4th value
@@ -139,6 +166,8 @@ private:
 
 			r=matchFirst(line, rgxTxtCoord);
 			if(r){
+				m_bHasTxtCoords = true;
+
 				string s[] = r[1].split;
 				float val[3] = to!(float[])(s[0..2])~(s.length==3 ? to!float(s[2]) : 0.0);
 				
@@ -148,10 +177,11 @@ private:
 
 			r=matchFirst(line, rgxFace);
 			if(r){
+				m_bHasFaces=true;
+
 				uint val[];
 
 				string s[] = r[1].split;
-				writeln("s=",s);
 				foreach(si ; 0..3){
 					string ss[] = s[si].split("/");
 					ss.length = 3;
@@ -179,5 +209,9 @@ private:
 
 
 	Object m_objects[];
+	bool m_bHasVertices = false;
+	bool m_bHasNormals = false;
+	bool m_bHasTxtCoords = false;
+	bool m_bHasFaces = false;
 
 }
