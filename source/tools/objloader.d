@@ -6,6 +6,7 @@ import std.stream;
 import std.conv : to;
 import opengl.rendertask;
 import resource;
+import std.string : split;
 
 import std.stdio;
 
@@ -13,7 +14,6 @@ class ObjLoader{
 
 	this(in DirEntry file){
 		Parse(file);
-
 	}
 
 	RenderTask[] GetRenderTasks(){
@@ -32,7 +32,7 @@ class ObjLoader{
 				float txtcoords[];
 
 				foreach(f ; g.faces){
-					vertices ~= g.vertices[f[2]-1]~g.vertices[f[1]-1]~g.vertices[f[0]-1];
+					vertices ~= g.vertices[f[0]-1]~g.vertices[f[3]-1]~g.vertices[f[6]-1];
 				}
 
 				//Use a unique VBO
@@ -56,25 +56,17 @@ class ObjLoader{
 
 		return ret;
 	}
-
-	void dbg(){
-		writeln("vertices: ",m_objects[0].groups[0].vertices.length);
-		writeln("normals: ",m_objects[0].groups[0].normals.length);
-		writeln("txtcoords: ",m_objects[0].groups[0].txtcoords.length);
-		writeln("faces: ",m_objects[0].groups[0].faces.length);
-	}
 	
-private://?P<name>
-	enum rgxComment = ctRegex!(r"^#.*$");
-	enum rgxVertex = ctRegex!(r"^v\s+([0-9\.eE\-]+)\s+([0-9\.eE\-]+)\s+([0-9\.eE\-]+)\s*$");
-	// ^v\s+([0-9\.eE\-]+)\s+([0-9\.eE\-]+)\s+([0-9\.eE\-]+)(\s+([0-9\.eE\-]+))?\s*$
-	enum rgxNormal = ctRegex!(r"^vn\s+([0-9\.eE\-]+)\s+([0-9\.eE\-]+)\s+([0-9\.eE\-]+)\s*$");
-	enum rgxTxtCoord = ctRegex!(r"^vt\s+([0-9\.eE\-]+)\s+([0-9\.eE\-]+)$");
-	enum rgxFace = ctRegex!(r"^f\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s*$");
+private:
+	enum rgxComment = ctRegex!(r"^\s*#.*?$");
+	enum rgxVertex = ctRegex!(r"^\s*v((\s+[0-9\.eE\-]+){3,4})\s*$");
+	enum rgxNormal = ctRegex!(r"^\s*vn((\s+[0-9\.eE\-]+){3})\s*$");
+	enum rgxTxtCoord = ctRegex!(r"^\s*vt((\s+[0-9\.eE\-]+){2,3})\s*$");
+	enum rgxFace = ctRegex!(r"^\s*f((\s+[0-9/]+){3})\s*$");
 
 
-	enum rgxObject = ctRegex!(r"^o\s+(.+)$");
-	enum rgxGroup = ctRegex!(r"^g\s+(.+)$");
+	enum rgxObject = ctRegex!(r"^\s*o\s+(.+)\s*$");
+	enum rgxGroup = ctRegex!(r"^\s*g\s+(.+)\s*$");
 
 
 	struct Object{
@@ -88,7 +80,7 @@ private://?P<name>
 		float vertices[][3];
 		float normals[][3];
 		float txtcoords[][2];
-		uint faces[][3];
+		uint faces[][9];
 	}
 
 
@@ -130,25 +122,49 @@ private://?P<name>
 
 			r=matchFirst(line, rgxVertex);
 			if(r){
-				grp.vertices~=[to!float(r[1]), to!float(r[2]), to!float(r[3])];
+				string s[] = r[1].split;
+				float val[4] = to!(float[])(s[0..3])~(s.length==4 ? to!float(s[3]) : 1.0);
+				
+				grp.vertices ~= val[0..3];//We do not use 4th value
 				continue;
 			}
 
 			r=matchFirst(line, rgxNormal);
 			if(r){
-				grp.normals~=[to!float(r[1]), to!float(r[2]), to!float(r[3])];
+				string s[] = r[1].split;
+				
+				grp.normals ~= to!(float[])(s[])[0..3];//We do not use 4th value
 				continue;
 			}
 
 			r=matchFirst(line, rgxTxtCoord);
 			if(r){
-				grp.txtcoords~=[to!float(r[1]), to!float(r[2])];
+				string s[] = r[1].split;
+				float val[3] = to!(float[])(s[0..2])~(s.length==3 ? to!float(s[2]) : 0.0);
+				
+				grp.txtcoords~=val[0..2];//We do not use 3rd value
 				continue;
 			}
 
 			r=matchFirst(line, rgxFace);
 			if(r){
-				grp.faces~=[to!uint(r[1]), to!uint(r[2]), to!uint(r[3])];
+				uint val[];
+
+				string s[] = r[1].split;
+				writeln("s=",s);
+				foreach(si ; 0..3){
+					string ss[] = s[si].split("/");
+					ss.length = 3;
+
+					foreach(ref ssv ; ss){
+						if(ssv=="")
+							val ~= uint.max;
+						else
+							val ~= to!(uint)(ssv);
+					}
+				}
+				writeln(val.length);
+				grp.faces~=val[0..9];
 				continue;
 			}
 		}
