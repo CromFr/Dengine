@@ -22,9 +22,6 @@ class ObjLoader{
 		foreach(o ; m_objects){
 
 			foreach(g ; o.groups){
-				writeln("Vertices=",g.vertices.length);
-				writeln("Faces=",g.faces.length);
-				
 
 				//Prepare Data
 				float vertices[];
@@ -32,16 +29,17 @@ class ObjLoader{
 				float normals[];
 
 				//fall to default if value is impossible
-				pure ref uint FallDef(ref uint i, in uint defIndex){
-					if(i==i.max) i = defIndex;
+				pure ref uint FallDef(ref uint i, ref uint defIndex){
+					if(i==i.max)
+						return defIndex;
 					return i;
 				}
 
 				foreach(f ; g.faces){
 					vertices ~= 
-							 g.vertices[f[0]-1]
-							~g.vertices[f[3]-1]
-							~g.vertices[f[6]-1];
+							 g.vertices[f[0]-1]//xyz
+							~g.vertices[f[3]-1]//xyz
+							~g.vertices[f[6]-1];//xyz
 
 					if(m_bHasTxtCoords){
 						txtcoords ~= 
@@ -49,6 +47,11 @@ class ObjLoader{
 							~g.txtcoords[ FallDef(f[4],f[3])-1 ]
 							~g.txtcoords[ FallDef(f[7],f[6])-1 ];
 					}
+					//else{
+					//	txtcoords ~= [g.vertices[f[0]-1][0]/100.0, g.vertices[f[0]-1][2]/100.0]
+					//				~[g.vertices[f[3]-1][0]/100.0, g.vertices[f[3]-1][2]/100.0]
+					//				~[g.vertices[f[6]-1][0]/100.0, g.vertices[f[6]-1][2]/100.0];
+					//}
 
 					if(m_bHasNormals){
 						normals ~= 
@@ -68,8 +71,12 @@ class ObjLoader{
 					RenderTask.DrawMode.Triangle, cast(uint)(g.faces.length*3)
 				);
 				rt.AssignVertex(vbo, 
-					VertexAddress(0, 3, 0)
+					VertexAddress(0, 3, 0),
+					VertexAddress(1, 2, 2)
 				);
+
+				rt.AssignTexture(Resource.Get!Texture("iron.jpg"));
+
 				rt.Prepare("");
 
 				ret ~= rt;
@@ -193,7 +200,6 @@ private:
 							val ~= to!(uint)(ssv);
 					}
 				}
-				writeln(val.length);
 				grp.faces~=val[0..9];
 				continue;
 			}
