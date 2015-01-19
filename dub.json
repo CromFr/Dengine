@@ -4,7 +4,9 @@
 	"copyright": "Copyright © 2014, Crom (Thibaut CHARLES)",
 	"authors": ["CromFr"],
 	"dependencies": {
-		"derelict": "~master",
+		"derelict-gl3": "~master",
+		"derelict-sdl2": "~master",
+		"derelict-glfw3": "~master",
 		"gl3n": "~master"
 	}
 }
