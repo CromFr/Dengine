@@ -2,23 +2,23 @@ module base.callback;
 
 import std.functional;
 
-class Callback {
+class Callback(Args...) {
 
-	void Execute(){
+	void Execute(Args args){
 		foreach(ref dg ; m_dg){
-			dg();
+			dg(args);
 		}
 	}
 
 	//TODO operator (func) to append delegate
 	//ex: Node.onRender(function(){...});
 
-	size_t Call(void delegate() dg){
+	size_t Call(void delegate(Args) dg){
 		m_dg[m_lastid++] = dg;
 		return m_lastid-1;
 	}
 
-	size_t Call(void function() fun){
+	size_t Call(void function(Args) fun){
 		return Call(toDelegate(fun));
 	}
 
@@ -28,5 +28,5 @@ class Callback {
 
 private:
 	size_t m_lastid = 0;
-	void delegate() m_dg[size_t];
+	void delegate(Args) m_dg[size_t];
 }

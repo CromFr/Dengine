@@ -28,31 +28,31 @@ void main()
 	Resource.LoadFromFiles!Texture("res/material", "*", true);
 
 	auto tetra = new Tetrahedron(eng.rootNode, Vect3Df(2,0,-5));
-	tetra.onUpdated.Call({
-		tetra.RotateX(1);
-		tetra.RotateZ(1);
+	tetra.onUpdated.Call((float sec){
+		tetra.RotateX(90.0*sec);
+		tetra.RotateZ(90.0*sec);
 	});
 
 	Cube cube = new Cube(eng.rootNode, Vect3Df(-2,0,-5));
-	cube.onUpdated.Call({
-		cube.RotateX(-0.1);
-		cube.RotateZ(-0.1);
+	cube.onUpdated.Call((float sec){
+		cube.RotateX(-9.0*sec);
+		cube.RotateZ(-9.0*sec);
 	});
 	auto cube2 = new Cube(cube, Vect3Df(1.0,0,0), Quatf.identity, Vect3Df(0.5,0.5,0.5));
 
 	auto crate = new Crate(eng.rootNode, Vect3Df(0,0,-5));
-	crate.onUpdated.Call({
+	crate.onUpdated.Call((float sec){
 		static bool b = false;
 		static int n = 0;
-		crate.RotateY(0.2);
+		crate.RotateY(2*sec);
 		if(!b){
-			crate.RotateX(0.3);
+			crate.RotateX(3.0*sec);
 			n++;
 			if(n==150)
 				b=true;
 		}
 		else{
-			crate.RotateX(-0.3);
+			crate.RotateX(-3.0*sec);
 			n--;
 			if(n==-150)
 				b=false;
@@ -60,14 +60,14 @@ void main()
 	});
 
 	auto axis = new Axis(eng.rootNode, Vect3Df(0,1,-5));
-	axis.onUpdated.Call({
-		axis.RotateX(-0.1);
-		axis.RotateZ(-0.1);
+	axis.onUpdated.Call((float sec){
+		axis.RotateX(sec*(-9.0));
+		axis.RotateZ(sec*(-9.0));
 	});
 
 	auto teapot = new Teapot(eng.rootNode, Vect3Df(2,1,-5), Quatf.identity, Vect3Df(0.01,0.01,0.01));
-	teapot.onUpdated.Call({
-		teapot.RotateY(0.3);
+	teapot.onUpdated.Call((float sec){
+		teapot.RotateY(30.0*sec);
 	});
 
 

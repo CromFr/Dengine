@@ -1,5 +1,6 @@
 module scene.node;
 
+import core.time: TickDuration;
 import std.stdio;
 import derelict.opengl3.gl3;
 import math.utils;
@@ -69,12 +70,12 @@ abstract class Node {
 		/**
 			Callback to execute when the node is rendered
 		*/
-		ref Callback onRendered(){return m_onrendered;}
+		ref Callback!() onRendered(){return m_onrendered;}
 
 		/**
 			Callback to execute when the node is updated
 		*/
-		ref Callback onUpdated(){return m_onupdated;}
+		ref Callback!float onUpdated(){return m_onupdated;}
 	}
 
 	/**
@@ -185,8 +186,11 @@ abstract class Node {
 			}
 		}
 
-		void Update(bool updateChildren=true){
-			m_onupdated.Execute();
+
+		void Update(float periodSec, bool updateChildren=true){
+			
+			m_onupdated.Execute(periodSec);
+			m_lastUpdate = TickDuration.currSystemTick;
 
 			if(m_matChange){
 				//Update model matrix
@@ -196,6 +200,13 @@ abstract class Node {
 
 			if(updateChildren)
 				foreach(ref child ; m_children)child.Update();
+		}
+		void Update(bool updateChildren=true){
+			if(m_lastUpdate==TickDuration.zero)
+				m_lastUpdate = TickDuration.currSystemTick;
+
+			auto cur = TickDuration.currSystemTick;
+			Update((cur-m_lastUpdate).to!("seconds", float), updateChildren);
 		}
 
 	}
@@ -210,16 +221,16 @@ abstract class Node {
 	}
 
 protected:
-	auto m_onrendered = new Callback;
-	auto m_onupdated = new Callback;
+	auto m_onrendered = new Callback!();
+	auto m_onupdated = new Callback!float;
 	mat4 m_matmodel;
 
-public:
-//private:
+private:
 	bool m_matChange = true;
 	Vect3Df m_pos, m_scale;
 	Quatf m_rot;
 	mat4 m_matpos, m_matrot, m_matscale;
+	TickDuration m_lastUpdate = TickDuration.zero;
 	
 
 	bool m_visible = true;
