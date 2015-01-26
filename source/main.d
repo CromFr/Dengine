@@ -38,7 +38,7 @@ void main()
 		cube.RotateX(-0.1);
 		cube.RotateZ(-0.1);
 	});
-	auto cube2 = new Cube(cube, Vect3Df(1.0,0,0), Vect3Df(45,45,0), Vect3Df(0.5,0.5,0.5));
+	auto cube2 = new Cube(cube, Vect3Df(1.0,0,0), Quatf.identity, Vect3Df(0.5,0.5,0.5));
 
 	auto crate = new Crate(eng.rootNode, Vect3Df(0,0,-5));
 	crate.onUpdated.Call({
@@ -65,7 +65,7 @@ void main()
 		axis.RotateZ(-0.1);
 	});
 
-	auto teapot = new Teapot(eng.rootNode, Vect3Df(2,1,-5), Vect3Df(0,0,0), Vect3Df(0.01,0.01,0.01));
+	auto teapot = new Teapot(eng.rootNode, Vect3Df(2,1,-5), Quatf.identity, Vect3Df(0.01,0.01,0.01));
 	teapot.onUpdated.Call({
 		teapot.RotateY(0.3);
 	});

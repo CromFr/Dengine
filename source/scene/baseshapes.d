@@ -14,7 +14,7 @@ import resource;
 
 
 class Tetrahedron : NodeModel {
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 		
 		Vbo vbo;
@@ -59,7 +59,7 @@ class Tetrahedron : NodeModel {
 
 
 class Cube : NodeModel {
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 
 		Vbo vbo;
@@ -119,7 +119,7 @@ class Cube : NodeModel {
 
 
 class Crate : Cube {
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 
 		Vbo vbo;
@@ -157,7 +157,7 @@ class Crate : Cube {
 
 
 class Axis : NodeModel {
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 
 		Vbo vbo;
@@ -224,7 +224,7 @@ class Axis : NodeModel {
 
 
 class Teapot : NodeModel{
-	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 
 		import tools.objloader;

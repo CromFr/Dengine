@@ -5,6 +5,7 @@ import derelict.opengl3.gl3;
 import math.utils;
 
 public import base.vect3d;
+public import base.quat;
 public import base.callback;
 public import gl3n.linalg;
 
@@ -16,7 +17,7 @@ abstract class Node {
 		Constructs the node on a parent node
 		Notes: The first parent is created by the engine, and is retrieved with engine.rootNode. If parent is null, the node will not be updated nor rendered
 	*/
-	final this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)) {
+	final this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)) {
 		m_parent = parent;
 		if(m_parent !is null)
 			m_parent.AddChild(this);
@@ -120,16 +121,11 @@ abstract class Node {
 		Rotations
 	*/
 	@property final {
-		Vect3Df rotation()const{return m_rot*(180.0/PI);}
-		void rotation(in Vect3Df rot){
-			//m_rot = rot*(PI/180.0);
-			//m_matrot = RotationMatrix(m_rot);
-			//m_matChange = true;
-			m_rot = Vect3Df(0,0,0);
-			m_matrot = mat4.identity;
-			RotateX(rot.x);
-			RotateY(rot.y);
-			RotateZ(rot.z);
+		Quatf rotation()const{return m_rot;}
+		void rotation(in Quatf rot){
+			m_rot = rot;
+			m_matrot = m_rot.to_matrix!(4,4);
+			m_matChange = true;
 		}
 	}
 
@@ -149,21 +145,27 @@ abstract class Node {
 		}
 
 		void RotateX(float degrees){
-			float fRad = degrees*(PI/180.0);
-			m_rot.x = m_rot.x+fRad;
-			m_matrot = m_matrot.rotatex(-fRad);
+			immutable fRad = degrees*(PI/180.0);
+			m_rot = m_rot.rotatex(fRad);
+			m_matrot = m_rot.to_matrix!(4,4);
 			m_matChange = true;
 		}
 		void RotateY(float degrees){
-			float fRad = degrees*(PI/180.0);
-			m_rot.y = m_rot.y+fRad;
-			m_matrot = m_matrot.rotatey(-fRad);
+			immutable fRad = degrees*(PI/180.0);
+			m_rot = m_rot.rotatey(fRad);
+			m_matrot = m_rot.to_matrix!(4,4);
 			m_matChange = true;
 		}
 		void RotateZ(float degrees){
-			float fRad = degrees*(PI/180.0);
-			m_rot.z = m_rot.z+fRad;
-			m_matrot = m_matrot.rotatez(-fRad);
+			immutable fRad = degrees*(PI/180.0);
+			m_rot = m_rot.rotatez(fRad);
+			m_matrot = m_rot.to_matrix!(4,4);
+			m_matChange = true;
+		}
+		void RotateVector(Vect3Df axis, float degrees){
+			immutable fRad = degrees*(PI/180.0);
+			m_rot = m_rot.rotate_axis(fRad, Vector!(float, 3)(axis.x, axis.y, axis.z));
+			m_matrot = m_rot.to_matrix!(4,4);
 			m_matChange = true;
 		}
 
@@ -186,8 +188,11 @@ abstract class Node {
 		void Update(bool updateChildren=true){
 			m_onupdated.Execute();
 
-			if(m_matChange)
-				UpdateMatrix();
+			if(m_matChange){
+				//Update model matrix
+				m_matmodel = m_matpos*m_matrot*m_matscale;
+				m_matChange = false;
+			}
 
 			if(updateChildren)
 				foreach(ref child ; m_children)child.Update();
@@ -199,7 +204,7 @@ abstract class Node {
 
 	mixin template NodeCtor()
 	{
-		this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Vect3Df rot=Vect3Df(0,0,0), in Vect3Df sca=Vect3Df(1,1,1)){
+		this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)){
 			super(parent, pos, rot, sca);
 		}
 	}
@@ -209,14 +214,12 @@ protected:
 	auto m_onupdated = new Callback;
 	mat4 m_matmodel;
 
-private:
+public:
+//private:
 	bool m_matChange = true;
-	Vect3Df m_pos, m_rot, m_scale;
+	Vect3Df m_pos, m_scale;
+	Quatf m_rot;
 	mat4 m_matpos, m_matrot, m_matscale;
-	void UpdateMatrix(){
-		m_matmodel = m_matpos*m_matrot*m_matscale;
-		m_matChange = false;
-	}
 	
 
 	bool m_visible = true;
