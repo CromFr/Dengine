@@ -89,33 +89,38 @@ abstract class Node {
 			m_matChange = true;
 		}
 
-		//Vect3Df positionAbsolute(){
-		//	//TODO Make function const
-		//	Vect3Df ret;
-		//	//ret+=this.m_pos;
-		//	//const(Node)* p = &m_parent;
-		//	//while(*p !is null){
-		//	//	p = &p.m_parent;
-		//	//	ret+=p.m_pos;
-		//	//}
-		//	Node p = this;
-		//	do{
-		//		ret+=p.m_pos;
-		//	}while((p=p.parent) !is null);
+		/**
+			TODO: make const
+		**/
+		Vect3Df positionAbsolute(){
+			Vect3Df ret;
+			Node p = this;
+			do{
+				ret+=p.m_pos;
+			}while((p=p.parent) !is null);
 
-		//	return ret;
-		//}
-		//void positionAbsolute(const ref Vect3Df pos){
-		//	m_pos += pos-positionAbsolute;
-		//}
+			return ret;
+		}
+		/**
+			TODO: make const
+		**/
+		void positionAbsolute(const ref Vect3Df pos){
+			m_pos += pos-positionAbsolute;
+		}
 
 
-		//Vect3Df positionToNode(ref Node node){
-		//	return node.positionAbsolute - positionAbsolute;
-		//}
-		//void positionToNode(ref Node node, ref Vect3Df pos){
-		//	m_pos += pos-positionToNode(node);
-		//}
+		/**
+			TODO: make const
+		**/
+		Vect3Df positionToNode(ref Node node){
+			return node.positionAbsolute - positionAbsolute;
+		}
+		/**
+			TODO: make const
+		**/
+		void positionToNode(ref Node node, ref Vect3Df pos){
+			m_pos += pos-positionToNode(node);
+		}
 	}
 
 	/**
@@ -176,6 +181,9 @@ abstract class Node {
 			m_matChange = true;
 		}
 
+		/**
+		Renders the node (called by the engine)
+		**/
 		void EngineRender(ref mat4 proj, mat4 mdlview){
 			if(m_visible){
 				mdlview = mdlview*m_matmodel;
@@ -186,9 +194,11 @@ abstract class Node {
 			}
 		}
 
-
+		/**
+		Update the node with a custom period. This can be used if you don't update the scene in the render loop
+		**/
 		void Update(float periodSec, bool updateChildren=true){
-			
+
 			m_onupdated.Execute(periodSec);
 			m_lastUpdate = TickDuration.currSystemTick;
 
@@ -201,6 +211,9 @@ abstract class Node {
 			if(updateChildren)
 				foreach(ref child ; m_children)child.Update();
 		}
+		/**
+		Update the node. This is usually not called manually (should be called with Engine.Update)
+		**/
 		void Update(bool updateChildren=true){
 			if(m_lastUpdate==TickDuration.zero)
 				m_lastUpdate = TickDuration.currSystemTick;
