@@ -71,6 +71,21 @@ class Engine {
 		void rootNode(ref Node rootnode){m_rootnode = rootnode;}
 	}
 
+	void LimitFramerate(float frameRateHz){
+		static TickDuration lastRender = TickDuration.zero;
+		if(lastRender==TickDuration.zero)
+			lastRender = TickDuration.currSystemTick;
+
+		immutable period = TickDuration((TickDuration.ticksPerSec/frameRateHz).to!long);
+		auto duration = period-(TickDuration.currSystemTick - lastRender);
+
+		if(duration.length>0){
+			import core.thread;
+			Thread.sleep(cast(Duration)duration);
+		}
+		lastRender = TickDuration.currSystemTick;
+	}
+
 
 private:
 	SDL_Window* m_win;

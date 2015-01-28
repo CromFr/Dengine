@@ -91,7 +91,7 @@ void main()
 			eng.Update();
 		eng.Render();
 
-		Thread.sleep(dur!"msecs"(10));
+		eng.LimitFramerate(60);
 	}
 
 
