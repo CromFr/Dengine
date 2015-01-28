@@ -81,9 +81,11 @@ static:
 			ctorArgs = Arguments passed to the resource constructor
 	*/
 	void LoadFromFiles(T, VT...)(in string directory, in string filePatern, in bool recursive, VT ctorArgs){
+		import std.path : dirSeparator;
+		
 		foreach(ref file ; dirEntries(directory, filePatern, recursive?SpanMode.depth:SpanMode.shallow)){
 			if(file.isFile){
-				string sName = file.name.chompPrefix(directory~"/");
+				string sName = file.name.chompPrefix(directory~dirSeparator);
 				CreateRes!T(sName, file, ctorArgs);
 			}
 		}
