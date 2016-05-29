@@ -29,7 +29,7 @@ enum ShaderType{
 
 class Shader{
 	this(DirEntry file, ShaderType type){
-		immutable char sourcecode[] = file.readText();
+		immutable char[] sourcecode = file.readText();
 		this(sourcecode.ptr, type, file.name);
 	}
 	this(immutable(char)* sourcecode, ShaderType type, in string filepath=""){
@@ -52,7 +52,7 @@ class Shader{
 			int length;
 			glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &length);
 
-			char info[];
+			char[] info;
 			info.length = length;
 
 			//glGetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);

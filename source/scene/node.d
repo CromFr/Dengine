@@ -2,6 +2,8 @@ module scene.node;
 
 import core.time: TickDuration;
 import std.stdio;
+import std.math: PI;
+import std.conv: to;
 import derelict.opengl3.gl3;
 import math.utils;
 
@@ -35,7 +37,7 @@ abstract class Node {
 	/**
 		Registers a node as the child of this node
 	*/
-	void AddChild(ref Node child){
+	void AddChild(Node child){
 		m_children~=child;
 	}
 
@@ -44,7 +46,7 @@ abstract class Node {
 		Warning: Should not be called manually
 	*/
 	void Render(ref mat4 proj, ref mat4 mdlview){}
-	
+
 
 	@property final {
 		/**
@@ -219,7 +221,7 @@ abstract class Node {
 				m_lastUpdate = TickDuration.currSystemTick;
 
 			auto cur = TickDuration.currSystemTick;
-			Update((cur-m_lastUpdate).to!("seconds", float), updateChildren);
+			Update((cur-m_lastUpdate).length/(TickDuration.ticksPerSec*1.0), updateChildren);
 		}
 
 	}
@@ -244,12 +246,12 @@ private:
 	Quatf m_rot;
 	mat4 m_matpos, m_matrot, m_matscale;
 	TickDuration m_lastUpdate = TickDuration.zero;
-	
+
 
 	bool m_visible = true;
 
 	Node m_parent;
-	Node m_children[];
+	Node[] m_children;
 
 }
 

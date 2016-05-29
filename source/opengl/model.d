@@ -4,12 +4,13 @@ import std.path;
 import gl3n.linalg;
 import opengl.rendertask;
 import tools.objloader;
+import std.file: DirEntry;
 
 class Model{
 	this(DirEntry file){
 		immutable string ext = extension(file);
 		switch(ext){
-			case ".obj": 
+			case ".obj":
 				m_renderTasks = (new ObjLoader(file)).GetRenderTasks();
 				break;
 
@@ -32,5 +33,5 @@ class Model{
 	}
 
 private:
-	RenderTask m_renderTasks[];
+	RenderTask[] m_renderTasks;
 }

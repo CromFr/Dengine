@@ -16,7 +16,7 @@ import resource;
 class Tetrahedron : NodeModel {
 	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
-		
+
 		Vbo vbo;
 		//Load data in VBO, create it if not exist
 		try vbo = Resource.Get!Vbo("_Tetrahedron");
@@ -27,14 +27,14 @@ class Tetrahedron : NodeModel {
 			enum C = [-1.0/(2.0*sqrt(3.0)), 0.5, -1.0/(2.0*sqrt(6.0))];
 			enum D = [1/sqrt(3.0), 0, -1/(2.0*sqrt(6.0))];
 
-			float vertices[] = A~B~C ~ D ~ A ~ B;
+			float[] vertices = A~B~C ~ D ~ A ~ B;
 
 			enum r = [1,0,0];
 			enum g = [0,1,0];
 			enum b = [0,0,1];
 			enum y = [1,1,0];
 
-			float colors[] = r~g~b~y~r~g;
+			float[] colors = r~g~b~y~r~g;
 
 			vbo = Resource.CreateRes!Vbo("_Tetrahedron", Vbo.Rate.Rarely, vertices, colors);
 		}
@@ -44,7 +44,7 @@ class Tetrahedron : NodeModel {
 			RenderTask.DrawMode.TriangleStrip, 6
 		);
 
-		rt.AssignVertex(vbo, 
+		rt.AssignVertex(vbo,
 				VertexAddress(0, 3, 0),
 				VertexAddress(1, 3, 1),
 		);
@@ -54,7 +54,7 @@ class Tetrahedron : NodeModel {
 		m_renderTasks ~= rt;
 	}
 
-	
+
 }
 
 
@@ -75,7 +75,7 @@ class Cube : NodeModel {
 			enum G = [-0.5,	-0.5,	-0.5];
 			enum H = [-0.5,	0.5,	-0.5];
 
-			float vertices[] = 
+			float[] vertices =
 				 A~B~C~A~C~D
 				~B~F~G~B~G~C
 				~A~E~F~A~F~B
@@ -90,7 +90,7 @@ class Cube : NodeModel {
 			enum c = [0,1,1];
 			enum m = [1,0,1];
 
-			float colors[] =
+			float[] colors =
 				 r~r~r~r~r~r
 				~g~g~g~g~g~g
 				~b~b~b~b~b~b
@@ -106,7 +106,7 @@ class Cube : NodeModel {
 			RenderTask.DrawMode.Triangle, 36
 		);
 
-		rt.AssignVertex(vbo, 
+		rt.AssignVertex(vbo,
 				VertexAddress(0, 3, 0),
 				VertexAddress(1, 3, 1),
 		);
@@ -131,7 +131,7 @@ class Crate : Cube {
 			enum tl = [0.0,1.0];
 			enum tr = [1.0,1.0];
 
-			float texturecoord[] = 
+			float[] texturecoord =
 				 tr~br~bl~tr~bl~tl
 				~br~tr~tl~br~tl~bl
 				~tl~tr~br~tl~br~bl
@@ -144,7 +144,7 @@ class Crate : Cube {
 
 		m_renderTasks[0].program = Resource.Get!Program("texture.prg");
 
-		m_renderTasks[0].AssignVertex(vbo, 
+		m_renderTasks[0].AssignVertex(vbo,
 				VertexAddress(0, 2, 2)
 		);
 		auto text = Resource.Get!Texture("crate.jpg");
@@ -164,11 +164,11 @@ class Axis : NodeModel {
 		try vbo = Resource.Get!Vbo("_Axis");
 		catch(ResourceException e){
 
-			float vertices[]= [	0,0,0, 1,0,0,
+			float[] vertices= [	0,0,0, 1,0,0,
 								0,0,0, 0,1,0,
 								0,0,0, 0,0,1];
 
-			float verticesarrow[]= [
+			float[] verticesarrow= [
 				1,0,0, 0.9,0.05,0, 0.9,-0.05,0,
 				1,0,0, 0.9,0,0.05, 0.9,0,-0.05,
 
@@ -183,9 +183,9 @@ class Axis : NodeModel {
 			enum g = [0,1,0];
 			enum b = [0,0,1];
 
-			float colors[] = r~r~g~g~b~b;
-			float colorsarrow[] =	r~r~r~ r~r~r~ 
-									g~g~g~ g~g~g~ 
+			float[] colors = r~r~g~g~b~b;
+			float[] colorsarrow =	r~r~r~ r~r~r~
+									g~g~g~ g~g~g~
 									b~b~b~ b~b~b ;
 
 			vbo = Resource.CreateRes!Vbo("_Axis", Vbo.Rate.Rarely, vertices, colors, verticesarrow, colorsarrow);
@@ -197,7 +197,7 @@ class Axis : NodeModel {
 			RenderTask.DrawMode.Line, 6
 		);
 
-		rt.AssignVertex(vbo, 
+		rt.AssignVertex(vbo,
 				VertexAddress(0, 3, 0),
 				VertexAddress(1, 3, 1),
 		);
@@ -211,7 +211,7 @@ class Axis : NodeModel {
 			RenderTask.DrawMode.Triangle, 18
 		);
 
-		rt2.AssignVertex(vbo, 
+		rt2.AssignVertex(vbo,
 				VertexAddress(2, 3, 0),
 				VertexAddress(3, 3, 1),
 		);
@@ -227,6 +227,7 @@ class Teapot : NodeModel{
 	this(Node parent, in Vect3Df pos=Vect3Df(0,0,0), in Quatf rot=Quatf.identity, in Vect3Df sca=Vect3Df(1,1,1)){
 		super(parent, pos, rot, sca);
 
+		import std.file: DirEntry;
 		import tools.objloader;
 		m_renderTasks~=(new ObjLoader(DirEntry("res/models/teapot.obj"))).GetRenderTasks();
 	}

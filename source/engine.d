@@ -2,6 +2,8 @@ module engine;
 
 import std.stdio;
 import std.math;
+import std.conv: to;
+import std.datetime: TickDuration;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -34,9 +36,9 @@ class Engine {
 		SDL_GLContext ctx = SDL_GL_CreateContext(m_win);
 
 		//Write OpenGL Version
-		writeln("OpenGL version: ", to!string(glGetString(GL_VERSION)));
-		writeln("OpenGL renderer: ", to!string(glGetString(GL_RENDERER)));
-		writeln("OpenGL vendor: ", to!string(glGetString(GL_VENDOR)));
+		writeln("OpenGL version: ", glGetString(GL_VERSION).to!string);
+		writeln("OpenGL renderer: ", glGetString(GL_RENDERER).to!string);
+		writeln("OpenGL vendor: ", glGetString(GL_VENDOR).to!string);
 
 		DerelictGL3.reload();
 

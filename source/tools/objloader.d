@@ -17,16 +17,16 @@ class ObjLoader{
 	}
 
 	RenderTask[] GetRenderTasks(){
-		RenderTask ret[];
+		RenderTask[] ret;
 
 		foreach(o ; m_objects){
 
 			foreach(g ; o.groups){
 
 				//Prepare Data
-				float vertices[];
-				float txtcoords[];
-				float normals[];
+				float[] vertices;
+				float[] txtcoords;
+				float[] normals;
 
 				//fall to default if value is impossible
 				pure ref uint FallDef(ref uint i, ref uint defIndex){
@@ -36,13 +36,13 @@ class ObjLoader{
 				}
 
 				foreach(f ; g.faces){
-					vertices ~= 
+					vertices ~=
 							 g.vertices[f[0]-1]//xyz
 							~g.vertices[f[3]-1]//xyz
 							~g.vertices[f[6]-1];//xyz
 
 					if(m_bHasTxtCoords){
-						txtcoords ~= 
+						txtcoords ~=
 							 g.txtcoords[ FallDef(f[1],f[0])-1 ]
 							~g.txtcoords[ FallDef(f[4],f[3])-1 ]
 							~g.txtcoords[ FallDef(f[7],f[6])-1 ];
@@ -54,7 +54,7 @@ class ObjLoader{
 					//}
 
 					if(m_bHasNormals){
-						normals ~= 
+						normals ~=
 							 g.normals[ FallDef(f[2],f[0])-1 ]
 							~g.normals[ FallDef(f[5],f[3])-1 ]
 							~g.normals[ FallDef(f[8],f[6])-1 ];
@@ -70,7 +70,7 @@ class ObjLoader{
 					Resource.Get!Program("texture.prg"),
 					RenderTask.DrawMode.Triangle, cast(uint)(g.faces.length*3)
 				);
-				rt.AssignVertex(vbo, 
+				rt.AssignVertex(vbo,
 					VertexAddress(0, 3, 0),
 					VertexAddress(1, 2, 2)
 				);
@@ -86,7 +86,7 @@ class ObjLoader{
 
 		return ret;
 	}
-	
+
 private:
 	enum rgxComment = ctRegex!(r"^\s*#.*?$");
 	enum rgxVertex = ctRegex!(r"^\s*v((\s+[0-9\.eE\-]+){3,4})\s*$");
@@ -101,16 +101,16 @@ private:
 
 	struct Object{
 		string name;
-		Group groups[];
+		Group[] groups;
 	}
 
 	struct Group{
 		string name;
 
-		float vertices[][3];
-		float normals[][3];
-		float txtcoords[][2];
-		uint faces[][9];
+		float[3][] vertices;
+		float[3][] normals;
+		float[2][] txtcoords;
+		uint[9][] faces;
 	}
 
 
@@ -125,7 +125,7 @@ private:
 			immutable string line = stream.readLine().idup;
 			Captures!string r;
 
-			
+
 			if(line==""){
 				continue;
 			}
@@ -141,7 +141,7 @@ private:
 				obj = Object(r[1]);
 				continue;
 			}
-			
+
 			r=matchFirst(line, rgxGroup);
 			if(r){
 				if(grp.name!="")
@@ -154,9 +154,9 @@ private:
 			if(r){
 				m_bHasVertices = true;
 
-				string s[] = r[1].split;
-				float val[4] = to!(float[])(s[0..3])~(s.length==4 ? to!float(s[3]) : 1.0);
-				
+				string[] s = r[1].split;
+				float[4] val = to!(float[])(s[0..3])~(s.length==4 ? to!float(s[3]) : 1.0);
+
 				grp.vertices ~= val[0..3];//We do not use 4th value
 				continue;
 			}
@@ -165,8 +165,8 @@ private:
 			if(r){
 				m_bHasNormals = true;
 
-				string s[] = r[1].split;
-				
+				string[] s = r[1].split;
+
 				grp.normals ~= to!(float[])(s[])[0..3];//We do not use 4th value
 				continue;
 			}
@@ -175,9 +175,9 @@ private:
 			if(r){
 				m_bHasTxtCoords = true;
 
-				string s[] = r[1].split;
-				float val[3] = to!(float[])(s[0..2])~(s.length==3 ? to!float(s[2]) : 0.0);
-				
+				string[] s = r[1].split;
+				float[3] val = to!(float[])(s[0..2])~(s.length==3 ? to!float(s[2]) : 0.0);
+
 				grp.txtcoords~=val[0..2];//We do not use 3rd value
 				continue;
 			}
@@ -186,11 +186,11 @@ private:
 			if(r){
 				m_bHasFaces=true;
 
-				uint val[];
+				uint[] val;
 
-				string s[] = r[1].split;
+				string[] s = r[1].split;
 				foreach(si ; 0..3){
-					string ss[] = s[si].split("/");
+					string[] ss = s[si].split("/");
 					ss.length = 3;
 
 					foreach(ref ssv ; ss){
@@ -214,7 +214,7 @@ private:
 	}
 
 
-	Object m_objects[];
+	Object[] m_objects;
 	bool m_bHasVertices = false;
 	bool m_bHasNormals = false;
 	bool m_bHasTxtCoords = false;

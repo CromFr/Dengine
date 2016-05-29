@@ -160,7 +160,7 @@ protected:
 	const uint m_vertexCount;
 	DrawMode m_drawMode;
 
-	VertexAddressFull m_vtxaddr[];
+	VertexAddressFull[] m_vtxaddr;
 	Vao m_vao;
 
 	Texture m_texture;

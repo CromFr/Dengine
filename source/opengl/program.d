@@ -27,7 +27,7 @@ class ProgramException : Exception{
 }
 
 class Program {
-	this(in uint shaders[], in char[] attribLoc...) {
+	this(in uint[] shaders, in char[] attribLoc...) {
 		m_filepath = "";
 
 		m_id = glCreateProgram();
@@ -61,7 +61,7 @@ class Program {
 		foreach(index, ref shader ; jsonFile["binds"].object){
 		    glBindAttribLocation(m_id, to!uint(index), shader.str.ptr);
 		}
-		
+
 		Link();
 	}
 
@@ -94,7 +94,7 @@ private:
 			int length;
 			glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &length);
 
-			char info[];
+			char[] info;
 			info.length = length;
 
 			//glGetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);

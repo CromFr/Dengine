@@ -28,5 +28,5 @@ class Callback(Args...) {
 
 private:
 	size_t m_lastid = 0;
-	void delegate(Args) m_dg[size_t];
+	void delegate(Args)[size_t] m_dg;
 }

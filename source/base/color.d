@@ -5,7 +5,7 @@ import std.algorithm;
 
 struct Color{
 
-	
+
 
 	this(in ubyte r, in ubyte g, in ubyte b, in ubyte a=ubyte.max){
 		m_valuergba = [r, g, b, a];
@@ -71,12 +71,12 @@ struct Color{
 			H /= 60.0;
 			ubyte i = cast(ubyte)(H);
 			float f = H-i;
-			float val[3] = [
+			float[3] val = [
 				V*(1.0-S),
 				V*(1-S*f),
 				V*(1-S*(1-f))
 			];
-			
+
 			std.stdio.writeln(i);
 			switch(i){
 				case 0: return Color(cast(ubyte)(V*255), 		cast(ubyte)(val[2]*255),	cast(ubyte)(val[0]*255)	);
@@ -96,7 +96,7 @@ struct Color{
 
 
 private:
-	ubyte m_valuergba[4];
+	ubyte[4] m_valuergba;
 
 }
 

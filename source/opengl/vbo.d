@@ -92,7 +92,7 @@ private:
 	Rate m_update;
 
 	uint m_totallength;
-	uint m_dataindex[];
-	uint m_datalength[];
+	uint[] m_dataindex;
+	uint[] m_datalength;
 
 }
